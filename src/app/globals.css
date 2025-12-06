@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Doppio+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap");
+@import "tailwindcss";
+:root {
+  --white: #fbfbfb;
+  --light-blue: #0e51da;
+  --blue: #0a1d3f;
+  --dark-blue: #040b10;
+  --font-doppio-one: "Doppio One", sans-serif;
+  --font-eb-garamond: "EB Garamond", serif;
+}
+
+@theme inline {
+  --color-dark-blue: var(--dark-blue);
+  --color-blue: var(--blue);
+  --color-light-blue: var(--light-blue);
+  --color-white: var(--white);
+  --font-doppio-one: var(--font-doppio-one);
+  --font-eb-garamond: var(--font-eb-garamond);
+}
+
+
+
+body {
+  font-family: "Doppio One", "EB Garamond", sans-serif;
+}
