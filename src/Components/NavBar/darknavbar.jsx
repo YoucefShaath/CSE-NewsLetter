@@ -10,10 +10,10 @@ export default function Navbar_Dark() {
         CSE Newsletter
       </span>
       <div className="md:space-x-4 space-x-2">
-        <button className="text-white md:text-md py-2 rounded-full md:px-8 px-4 rounded hover:bg-white hover:text-dark-blue transition">
+        <button className="text-white md:text-md py-2 rounded-full cursor-pointer md:px-8 px-4 rounded hover:bg-white hover:text-dark-blue transition">
           Sign Up
         </button>
-        <button className="text-white border rounded-full border-white md:px-8 px-4 py-2 rounded hover:bg-white hover:text-dark-blue transition">
+        <button className="text-white border rounded-full border-white md:px-8 px-4 py-2 rounded cursor-pointer hover:bg-white hover:text-dark-blue transition">
           Log In
         </button>
       </div>
