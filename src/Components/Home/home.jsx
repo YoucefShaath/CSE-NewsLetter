@@ -2,6 +2,7 @@ import Image from "next/image";
 
 export default function HomePage() {
   return (
+  
     <div className="flex flex-col text-center bg-dark-blue items-center justify-between min-h-screen py-8">
       <div className="flex-1 flex flex-col items-center justify-center mt-20">
         <h1 className="text-4xl font-bold text-white font-eb-garamond mb-4">

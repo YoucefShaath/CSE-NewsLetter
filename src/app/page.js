@@ -3,14 +3,19 @@ import Navbar_Light from "../Components/NavBar/lightnavbar.jsx";
 import LogIn from "@/Components/LogIn/login.jsx";
 import SignUp from "@/Components/SignUp/signup.jsx";
 import HomePage from "@/Components/Home/home.jsx";
+import NotificationPage from "@/Components/Notification_Page/Notification.jsx";
+import NotificationPageDark from "@/Components/Notification_Page/Notification.jsx";
+import NotificationPageLight from "@/Components/Notification_Page/NotificationPageLight.jsx";
 
 export default function Home() {
   return (
     <div>
-      {/* <Navbar_Dark />
-      <HomePage /> */}
-      {/* <LogIn/> */}
-      <SignUp />
+      {/* <Navbar_Dark/>
+       <HomePage /> 
+       <LogIn/> 
+       <SignUp />*/}
+      <NotificationPageLight/>
+      
     </div>
   );
 }
