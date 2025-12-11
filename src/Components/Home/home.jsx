@@ -38,14 +38,14 @@ export default function Home() {
             className="absolute right-0 bottom-0 opacity-50 max-w-full"
           />
           <h1
-            className={`text-4xl font-bold font-eb-garamond mb-4 mt-20 ${
+            className={`text-4xl md:text-6xl font-bold font-eb-garamond mb-4 mt-20 ${
               isDark ? "text-white" : "text-dark-blue"
             }`}
           >
             Welcome To The CSE Newsletter
           </h1>
           <p
-            className={`text-sm mb-8 ${
+            className={`text-sm md:text-lg mb-8 ${
               isDark ? "text-gray-400" : "text-gray-600"
             }`}
           >
