@@ -17,13 +17,13 @@ export default function LogIn() {
           <input
             type="email"
             placeholder="Email"
-            className="border border-gray-300 rounded-md px-4 py-2 mt-6 w-80 focus:outline-none focus:ring-2 focus:ring-light-blue focus:border-transparent transition-all"
+            className="border border-gray-300 rounded-md px-4 py-2 mt-6 w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-light-blue focus:border-transparent transition-all"
           />
-          <div className="relative mt-4">
+          <div className="relative mt-4 w-full max-w-xs">
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
-              className="border border-gray-300 rounded-md px-4 py-2 w-80 focus:outline-none focus:ring-2 focus:ring-light-blue focus:border-transparent transition-all"
+              className="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-light-blue focus:border-transparent transition-all"
             />
             <button
               type="button"
@@ -70,7 +70,7 @@ export default function LogIn() {
           </div>
           <button
             onClick={() => router.push("/general")}
-            className="group bg-dark-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+            className="group bg-dark-blue text-white rounded-md px-4 py-2 mt-6 w-full max-w-xs hover:bg-white hover:text-dark-blue border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
           >
             <span className="inline-block group-hover:translate-x-3 transition-transform duration-300">
               Log In
@@ -83,12 +83,12 @@ export default function LogIn() {
               className="inline-block ml-2 group-hover:opacity-0 transition-opacity duration-300"
             />
           </button>
-          <div className="flex items-center mt-4 w-80">
+          <div className="flex items-center mt-4 w-full max-w-xs">
             <div className="border border-gray-300 flex-1"></div>
             <span className="mx-2 text-gray-600">or</span>
             <div className="border border-gray-300 flex-1"></div>
           </div>
-          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-80 border border-dark-blue border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full max-w-xs border border-dark-blue border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
             Sign In with Google
             <Image
               src="/google.svg"
@@ -127,13 +127,13 @@ export default function LogIn() {
           <input
             type="email"
             placeholder="Email"
-            className="border border-gray-300 bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-80 focus:outline-none focus:ring-2 focus:ring-light-blue focus:border-transparent transition-all"
+            className="border border-gray-300 bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-light-blue focus:border-transparent transition-all"
           />
-          <div className="relative mt-4">
+          <div className="relative mt-4 w-full max-w-xs">
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
-              className="border border-gray-300 bg-white text-dark-blue rounded-md px-4 py-2 w-80 focus:outline-none focus:ring-2 focus:ring-light-blue focus:border-transparent transition-all"
+              className="border border-gray-300 bg-white text-dark-blue rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-light-blue focus:border-transparent transition-all"
             />
             <button
               type="button"
@@ -180,7 +180,7 @@ export default function LogIn() {
           </div>
           <button
             onClick={() => router.push("/general")}
-            className="group bg-light-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+            className="group bg-light-blue text-white rounded-md px-4 py-2 mt-6 w-full max-w-xs hover:bg-white hover:text-dark-blue border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
           >
             <span className="inline-block group-hover:translate-x-3 transition-transform duration-300">
               Log In
@@ -193,12 +193,12 @@ export default function LogIn() {
               className="inline-block ml-2 group-hover:opacity-0 transition-opacity duration-300"
             />
           </button>
-          <div className="flex items-center mt-4 w-80">
+          <div className="flex items-center mt-4 w-full max-w-xs">
             <div className="border border-gray-300 flex-1"></div>
             <span className="mx-2 text-gray-600">or</span>
             <div className="border border-gray-300 flex-1"></div>
           </div>
-          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-80  border-white border-2 hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full max-w-xs  border-white border-2 hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
             Sign In with Google
             <Image
               src="/google.svg"
