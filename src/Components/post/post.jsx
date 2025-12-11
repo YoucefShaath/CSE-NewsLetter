@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 export default function Post(props) {
   const [liked, setLiked] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -120,7 +121,10 @@ export default function Post(props) {
               {/* Header */}
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden relative">
+                  <Link
+                    href="/profile"
+                    className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden relative block"
+                  >
                     {/* Placeholder Avatar */}
                     <Image
                       src={props.authorImage}
@@ -128,11 +132,13 @@ export default function Post(props) {
                       className="object-cover cursor-pointer"
                       alt="Author"
                     />
-                  </div>
+                  </Link>
                   <div>
-                    <h3 className="font-bold text-sm text-gray-900 hover:underline cursor-pointer">
-                      {props.author}
-                    </h3>
+                    <Link href="/profile">
+                      <h3 className="font-bold text-sm text-gray-900 hover:underline cursor-pointer">
+                        {props.author}
+                      </h3>
+                    </Link>
                     <p className="text-xs text-gray-500">
                       {props.publishedDate}
                     </p>
@@ -177,6 +183,34 @@ export default function Post(props) {
                     fill
                     className="object-cover"
                   />
+                </div>
+
+                {/* Comments Section */}
+                <div className="mt-8 border-t border-gray-100 pt-6">
+                  <h4 className="font-bold text-gray-900 mb-4">Comments</h4>
+
+                  {/* Example Comment */}
+                  <div className="flex gap-3 mb-4">
+                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden relative flex-shrink-0">
+                      <Image
+                        src="/hackitpic.png"
+                        fill
+                        className="object-cover"
+                        alt="User"
+                      />
+                    </div>
+                    <div className="bg-gray-50 rounded-2xl p-3 flex-1">
+                      <div className="flex justify-between items-baseline mb-1">
+                        <span className="font-bold text-sm text-gray-900">
+                          Jane Smith
+                        </span>
+                        <span className="text-xs text-gray-500">2h ago</span>
+                      </div>
+                      <p className="text-sm text-gray-700">
+                        This looks amazing! Can't wait to see more updates.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
