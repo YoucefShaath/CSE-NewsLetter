@@ -2,6 +2,7 @@
 
 import DarkNav from "../NavBar/darknavbar.jsx";
 import LightNav from "../NavBar/lightnavbar.jsx";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function Home() {
@@ -40,7 +41,6 @@ export default function Home() {
     <div
   className=" w-screen h-screen bg-dark-blue bg-cover bg-center block md:bg-[url('/background.png')] bg-[url('/bgphone.png')]"
 >
-  <DarkNav />
 
   <img
     src="/Ellipse1.svg"
@@ -59,8 +59,8 @@ export default function Home() {
       A place where you can find Posts, Events, Announcements ...
     </p>
 
-    <button className="bg-blue-500 border-blue-700 text-[7px] h-[16px] w-[43px]  md:text-xl md:h-[60px] md:w-[160px] md:px-5 md:py-2 rounded-[30px]">
-      ⚡ Join Us
+    <button className="bg-blue-500 cursor-pointer flex items-center border-blue-700 md:text-xl md:h-[60px] md:w-[160px] md:px-5 md:py-2 rounded-[30px]">
+      <Image src="/Vector.svg" alt="Join Us" width={24} height={24} /> <span className="ml-4 text-2xl font-bold">Join Us</span>
     </button>
   </div>
 
