@@ -1,21 +1,11 @@
-import Navbar_Dark from "../Components/NavBar/darknavbar.jsx";
-import Navbar_Light from "../Components/NavBar/lightnavbar.jsx";
-import LogIn from "@/Components/LogIn/login.jsx";
-import SignUp from "@/Components/SignUp/signup.jsx";
+import Navbar from "../Components/NavBar/navbar.jsx";
 import HomePage from "@/Components/Home/home.jsx";
-import NotificationPage from "@/Components/Notification_Page/Notification.jsx";
-import NotificationPageDark from "@/Components/Notification_Page/Notification.jsx";
-import NotificationPageLight from "@/Components/Notification_Page/NotificationPageLight.jsx";
 
 export default function Hom() {
   return (
     <div>
-      {/* <Navbar_Dark/>
-       <HomePage /> 
-       <LogIn/> 
-       <SignUp />*/}
-      <NotificationPageLight/>
-      
+      <Navbar />
+      <HomePage />
     </div>
   );
 }

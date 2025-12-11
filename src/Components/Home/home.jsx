@@ -1,81 +1,145 @@
 "use client";
 
-import DarkNav from "../NavBar/darknavbar.jsx";
-import LightNav from "../NavBar/lightnavbar.jsx";
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function Home() {
-  const [dark, setDark] = useState(false);
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   return (
-  
-    <div className="flex flex-col text-center bg-dark-blue items-center justify-between min-h-screen py-8">
-      <div className="flex-1 flex flex-col items-center justify-center mt-20">
-        <h1 className="text-4xl font-bold text-white font-eb-garamond mb-4">
-          Welcome To The CSE Newsletter
-        </h1>
-        <p className="text-gray-400 text-sm mb-8">
-          A place where you can find events , posts, announcements ...
-        </p>
-        <button className="flex items-center justify-center px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors cursor-pointer">
-          <Image src="/Vector.svg" alt="Button Image" width={20} height={20} />
-          <span className="ml-2">Join Us</span>
-        </button>
-      </div>
-      <div className="flex flex-col items-center gap-y-4 mt-">
-        <Image src="/bluelogo.svg" alt="CSE Logo" width={100} height={100} />
-        <span className="text-white ml-4">Follow Us</span>
-        <div className="flex space-x-4">
-          <Image src="/facebook.svg" alt="Facebook" width={30} height={30} className="cursor-pointer" />
-          <Image src="/instagram.svg" alt="Instagram" width={30} height={30} className="cursor-pointer" />
-          <Image src="/linkedin.svg" alt="LinkedIn" width={30} height={30} className="cursor-pointer" />
-          <Image src="/x.svg" alt="Twitter" width={30} height={30} className="cursor-pointer" />
-          <Image src="/youtube.svg" alt="YouTube" width={30} height={30} className="cursor-pointer" />
+    <>
+      <div
+        className={`flex flex-col text-center items-center justify-between min-h-screen py-8 transition-colors duration-300 ${
+          isDark ? "bg-dark-blue" : "bg-white"
+        }`}
+      >
+        <div className="flex-1 flex flex-col items-center justify-center mt-20">
+          <Image
+            src="/circle.svg"
+            alt="Decoration"
+            width={500}
+            height={500}
+            className="absolute top-16 opacity-100"
+            
+          />
+          <Image
+            src="/glow.svg"
+            alt="Glow Decoration"
+            width={600}
+            height={600}
+            className="absolute -left-40 -top-28 opacity-50"
+          />
+          <Image
+            src="/glow.svg"
+            alt="Glow Decoration"
+            width={600}
+            height={600}
+            className="absolute right-0 bottom-0 opacity-50"
+          />
+          <h1
+            className={`text-4xl font-bold font-eb-garamond mb-4 mt-20 ${
+              isDark ? "text-white" : "text-dark-blue"
+            }`}
+          >
+            Welcome To The CSE Newsletter
+          </h1>
+          <p
+            className={`text-sm mb-8 ${
+              isDark ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
+            A place where you can find events , posts, announcements ...
+          </p>
+          <Link href="/signup">
+            <button className="flex items-center justify-center px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors cursor-pointer">
+              <Image
+                src="/Vector.svg"
+                alt="Button Image"
+                width={18}
+                height={18}
+              />
+              <span className="ml-2 text-xl">Join Us</span>
+            </button>
+          </Link>
         </div>
-        <p className="text-gray-400 text-sm font-light mt-4">
-          Copyright © 2025 CSE Newsletter. All rights reserved.
-        </p>
+        <div className="flex flex-col items-center gap-y-2">
+          <Image
+            src={isDark ? "/darklogo.svg" : "/lightlogo.svg"}
+            alt="CSE Logo"
+            width={80}
+            height={80}
+          />
+          <span className={`ml-4 ${isDark ? "text-white" : "text-dark-blue"}`}>
+            Follow Us
+          </span>
+          <div className="flex gap-4 justify-center mt-4 mb-4">
+            <a href="https://www.instagram.com/cse.club/" target="_blank">
+              <Image
+                src={isDark ? "/instagramwhite.svg" : "/instagram.svg"}
+                alt="Instagram"
+                width={30}
+                height={30}
+                className="hover:scale-110"
+              />
+            </a>
+            <a
+              href="https://www.facebook.com/club.scientifique.esi"
+              target="_blank"
+            >
+              <Image
+                src={isDark ? "/facebookwhite.svg" : "/facebook.svg"}
+                alt="Facebook"
+                width={30}
+                height={30}
+                className="hover:scale-110"
+              />
+            </a>
+            <a href="https://x.com/CSESI_Club" target="_blank">
+              <Image
+                src={isDark ? "/xwhite.svg" : "/x.svg"}
+                alt="Twitter"
+                width={30}
+                height={30}
+                className="hover:scale-110"
+              />
+            </a>
+            <a
+              href="https://www.linkedin.com/company/cse-club/"
+              target="_blank"
+            >
+              <Image
+                src={isDark ? "/linkedinwhite.svg" : "/linkedin.svg"}
+                alt="LinkedIn"
+                width={30}
+                height={30}
+                className="hover:scale-110"
+              />
+            </a>
+            <a
+              href="https://www.youtube.com/channel/UCHgeF6ELJW0Pt1vYoAomCig"
+              target="_blank"
+            >
+              <Image
+                src={isDark ? "/youtubewhite.svg" : "/youtube.svg"}
+                alt="YouTube"
+                width={30}
+                height={30}
+                className="hover:scale-110"
+              />
+            </a>
+          </div>
+          <p
+            className={`flex justify-center text-[11px] font-light ${
+              isDark ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
+            Copyright &copy; <span>{new Date().getFullYear()}</span>&nbsp;Club
+            Scientifique de l'ESI. All Rights Reserved.
+          </p>
+        </div>
       </div>
-    </div>
-    <div
-  className=" w-screen h-screen bg-dark-blue bg-cover bg-center block md:bg-[url('/background.png')] bg-[url('/bgphone.png')]"
->
-
-  <img
-    src="/Ellipse1.svg"
-    alt="Elipse"
-    className="relative -top-44 -left-56 md:-top-2/3 md:-left-72 md:h-[887px] md:w-[887px] h-[400px] w-[400px]"
-  />
-
-  <div
-    style={{ fontFamily: 'Times New Roman' }}
-    className="relative -top-[250px] md:-top-[80%] flex flex-col items-center justify-center text-white gap-3"
-  >
-    <h1 className="md:text-7xl text-[24px]">Welcome To The CSE</h1>
-    <h1 className="md:text-7xl text-[24px]">Newsletter</h1>
-
-    <p className="md:text-lg text-[7px] text-light-grey">
-      A place where you can find Posts, Events, Announcements ...
-    </p>
-
-    <button className="bg-blue-500 cursor-pointer flex items-center border-blue-700 md:text-xl md:h-[60px] md:w-[160px] md:px-5 md:py-2 rounded-[30px]">
-      <Image src="/Vector.svg" alt="Join Us" width={24} height={24} /> <span className="ml-4 text-2xl font-bold">Join Us</span>
-    </button>
-  </div>
-
-  <div className="relative bottom-24 flex  flex-col items-center gap-4 md:hidden ">
-    <img className="h-38 w-28 pr-8" src="/lightlogo.svg" alt="" />
-    <div className=" flex flex-row gap-2 justify-center ">
-      <a href="https://web.facebook.com/club.scientifique.esi/?_rdc=1&_rdr#"><img className="h-5 transition-all duration-300 hover:-translate-y-2 "  src="/facebook.svg" alt="" /></a>
-      <a href="https://x.com/CSESI_Club"><img className="h-5 transition-all duration-300 hover:-translate-y-2 " src="/x.svg" alt="" /></a>
-      <a href="https://www.instagram.com/cse.club/"><img className="h-5 transition-all duration-300 hover:-translate-y-2 "  src="/instagram.svg" alt="" /></a>
-      <a href="https://www.youtube.com/channel/UCHgeF6ELJW0Pt1vYoAomCig"><img className="h-5 transition-all duration-300 hover:-translate-y-2 "  src="/youtube.svg" alt="" /></a>
-     </div>
-  </div>
-
-  <p  className=" relative text-center  text-[12px] text-white md:hidden">Copyright © 2025 Club Scientifique de l'ESI. All Rights Reserved</p>
-</div>
-
+    </>
   );
 }

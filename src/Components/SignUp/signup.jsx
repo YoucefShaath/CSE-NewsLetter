@@ -1,22 +1,36 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function SignUp() {
-    const [showPassword1, setShowPassword1] = useState(false);
-    const [showPassword2, setShowPassword2] = useState(false);
-            
-  return <div className="md:flex h-screen">
-        <div className="hidden md:block w-[50%] bg-white">
-            <div className="flex flex-col items-start justify-center h-full px-50">
-            <span className="text-4xl ">Sign Up</span>
-            <input type="text" placeholder="Full Name" className="border border-gray-300 rounded-md px-4 py-2 mt-6 w-80"/>
-            <input type="text" placeholder="Username" className="border border-gray-300 rounded-md px-4 py-2 mt-4 w-80"/>
-            <input type="email" placeholder="Email" className="border border-gray-300 rounded-md px-4 py-2 mt-4 w-80"/>
-            <div className="relative mt-4">
+  const [showPassword1, setShowPassword1] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
+
+  return (
+    <div className="md:flex h-screen">
+      <div className="hidden md:block w-[50%] bg-white">
+        <div className="flex flex-col items-start justify-center h-full px-50">
+          <span className="text-4xl ">Sign Up</span>
+          <input
+            type="text"
+            placeholder="Full Name"
+            className="border border-gray-300 rounded-md px-4 py-2 mt-6 w-80"
+          />
+          <input
+            type="text"
+            placeholder="Username"
+            className="border border-gray-300 rounded-md px-4 py-2 mt-4 w-80"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            className="border border-gray-300 rounded-md px-4 py-2 mt-4 w-80"
+          />
+          <div className="relative mt-4">
             <input
-              type={showPassword1? "text" : "password"}
+              type={showPassword1 ? "text" : "password"}
               placeholder="Password"
               className="border border-gray-300 rounded-md px-4 py-2 w-80"
             />
@@ -63,7 +77,7 @@ export default function SignUp() {
               )}
             </button>
           </div>
-            <div className="relative mt-4">
+          <div className="relative mt-4">
             <input
               type={showPassword2 ? "text" : "password"}
               placeholder="Confirm Password"
@@ -112,50 +126,80 @@ export default function SignUp() {
               )}
             </button>
           </div>
-            <button className="group bg-dark-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue 
-            border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
-                        <span className="inline-block group-hover:translate-x-3 transition-transform duration-300">
-                            Sign Up
-                        </span>
-                        <Image
-                          src="/arrow.svg"
-                          alt="Arrow Right"
-                          width={20}
-                          height={20}
-                          className="inline-block ml-2 group-hover:opacity-0 transition-opacity duration-300"
-                        />
-                      </button>
-                      <div className="flex items-center mt-4 w-80">
-                        <div className="border border-gray-300 flex-1"></div>
-                        <span className="mx-2 text-gray-600">or</span>
-                        <div className="border border-gray-300 flex-1"></div>
-                      </div>
-                      <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-80 border border-dark-blue border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
-                        Sign Up with Google
-                        <Image
-                          src="/google.svg"
-                          alt="Google logo"
-                          width={20}
-                          height={20}
-                          className="inline-block ml-2"
-                        />
-                      </button>
-            <span className="mt-4">Already have an account? <a href="#" className="text-light-blue font-semibold hover:underline transition-all">Log In</a></span>
-            </div>
+          <button
+            className="group bg-dark-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue 
+            border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+          >
+            <span className="inline-block group-hover:translate-x-3 transition-transform duration-300">
+              Sign Up
+            </span>
+            <Image
+              src="/arrow.svg"
+              alt="Arrow Right"
+              width={20}
+              height={20}
+              className="inline-block ml-2 group-hover:opacity-0 transition-opacity duration-300"
+            />
+          </button>
+          <div className="flex items-center mt-4 w-80">
+            <div className="border border-gray-300 flex-1"></div>
+            <span className="mx-2 text-gray-600">or</span>
+            <div className="border border-gray-300 flex-1"></div>
+          </div>
+          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-80 border border-dark-blue border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+            Sign Up with Google
+            <Image
+              src="/google.svg"
+              alt="Google logo"
+              width={20}
+              height={20}
+              className="inline-block ml-2"
+            />
+          </button>
+          <span className="mt-4">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="text-light-blue font-semibold hover:underline transition-all"
+            >
+              Log In
+            </Link>
+          </span>
         </div>
-        <div className="hidden md:flex flex-col items-center justify-center w-[50%] bg-dark-blue">
-            <Image src="/darklogo.svg" alt="CSE Logo" width={200} height={200} className="mx-auto mb-10"/>
-            <span className="text-white text-4xl ml-8 text-center">CSE NEWSLETTER</span>
-        </div>
-        <div className="block md:hidden w-full h-screen bg-dark-blue flex items-center text-white justify-center">
-                <div className="flex flex-col items-start justify-center h-full">
-            <span className="text-4xl ">Sign Up</span>
-            <input type="text" placeholder="Full Name" className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 mt-6 w-80"/>
-            <input type="text" placeholder="Username" className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 mt-4 w-80"/>
-            <input type="email" placeholder="Email" className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 mt-4 w-80"/>
-            <div className="relative mt-4">
+      </div>
+      <div className="hidden md:flex flex-col items-center justify-center w-[50%] bg-dark-blue">
+        <Image
+          src="/darklogo.svg"
+          alt="CSE Logo"
+          width={200}
+          height={200}
+          className="mx-auto mb-10"
+        />
+        <span className="text-white text-4xl ml-8 text-center">
+          CSE NEWSLETTER
+        </span>
+      </div>
+      <div className="block md:hidden w-full h-screen bg-dark-blue flex items-center text-white justify-center">
+        <div className="flex flex-col items-start justify-center h-full">
+          <span className="text-4xl ">Sign Up</span>
+          <input
+            type="text"
+            placeholder="Full Name"
+            className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 mt-6 w-80"
+          />
+          <input
+            type="text"
+            placeholder="Username"
+            className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 mt-4 w-80"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 mt-4 w-80"
+          />
+          <div className="relative mt-4">
             <input
-              type={showPassword1? "text" : "password"}
+              type={showPassword1 ? "text" : "password"}
               placeholder="Password"
               className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 w-80"
             />
@@ -202,7 +246,7 @@ export default function SignUp() {
               )}
             </button>
           </div>
-            <div className="relative mt-4">
+          <div className="relative mt-4">
             <input
               type={showPassword2 ? "text" : "password"}
               placeholder="Confirm Password"
@@ -251,36 +295,47 @@ export default function SignUp() {
               )}
             </button>
           </div>
-            <button className="group bg-light-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue 
-            border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
-                        <span className="inline-block group-hover:translate-x-3 transition-transform duration-300">
-                            Sign Up
-                        </span>
-                        <Image
-                          src="/arrow.svg"
-                          alt="Arrow Right"
-                          width={20}
-                          height={20}
-                          className="inline-block ml-2 group-hover:opacity-0 transition-opacity duration-300"
-                        />
-                      </button>
-                      <div className="flex items-center mt-4 w-80">
-                        <div className="border border-gray-300 flex-1"></div>
-                        <span className="mx-2 text-gray-600">or</span>
-                        <div className="border border-gray-300 flex-1"></div>
-                      </div>
-                      <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-80 border-white border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
-                        Sign Up with Google
-                        <Image
-                          src="/google.svg"
-                          alt="Google logo"
-                          width={20}
-                          height={20}
-                          className="inline-block ml-2"
-                        />
-                      </button>
-            <span className="mt-4">Already have an account? <a href="#" className="text-light-blue font-semibold hover:underline transition-all">Log In</a></span>
-            </div>
+          <button
+            className="group bg-light-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue 
+            border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+          >
+            <span className="inline-block group-hover:translate-x-3 transition-transform duration-300">
+              Sign Up
+            </span>
+            <Image
+              src="/arrow.svg"
+              alt="Arrow Right"
+              width={20}
+              height={20}
+              className="inline-block ml-2 group-hover:opacity-0 transition-opacity duration-300"
+            />
+          </button>
+          <div className="flex items-center mt-4 w-80">
+            <div className="border border-gray-300 flex-1"></div>
+            <span className="mx-2 text-gray-600">or</span>
+            <div className="border border-gray-300 flex-1"></div>
+          </div>
+          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-80 border-white border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+            Sign Up with Google
+            <Image
+              src="/google.svg"
+              alt="Google logo"
+              width={20}
+              height={20}
+              className="inline-block ml-2"
+            />
+          </button>
+          <span className="mt-4">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="text-light-blue font-semibold hover:underline transition-all"
+            >
+              Log In
+            </Link>
+          </span>
         </div>
-  </div>;
+      </div>
+    </div>
+  );
 }
