@@ -7,7 +7,7 @@ import NotificationPage from "@/Components/Notification_Page/Notification.jsx";
 import NotificationPageDark from "@/Components/Notification_Page/Notification.jsx";
 import NotificationPageLight from "@/Components/Notification_Page/NotificationPageLight.jsx";
 
-export default function Home() {
+export default function Hom() {
   return (
     <div>
       {/* <Navbar_Dark/>
