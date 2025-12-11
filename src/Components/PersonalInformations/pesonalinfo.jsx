@@ -1,6 +1,5 @@
 "use client";
-
-import DarkNav from "../NavBar/darknavbar.jsx";
+import Image from "next/image";
 import React, { useState } from 'react';
 
 export default function PersonalInformation() {
@@ -40,7 +39,6 @@ export default function PersonalInformation() {
 
   return (
     <div className="relative flex bg-cover h-auto min-h-screen w-full flex-col bg-[url('/bg-persInfsm.png')]  md:bg-[url('/bg-persInf.png')] dark:bg-gray-900">
-        <DarkNav/>
       <div className="flex h-full grow flex-col">
         <div className="flex flex-1 justify-center py-5 sm:px-4 md:px-10 lg:px-20 xl:px-40">
           <div className="flex flex-col max-w-[960px] flex-1">
@@ -188,16 +186,66 @@ export default function PersonalInformation() {
             </main>
 
             {/* Footer */}
-            <footer className="flex flex-col gap-4  text-center py-6 mt-10 border-t border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 text-sm">
-              <p  href="#">Contact Us</p>
-              <div className=" flex flex-row gap-2 justify-center ">
-      <a href="https://web.facebook.com/club.scientifique.esi/?_rdc=1&_rdr#"><img className="h-5 transition-all duration-300 hover:-translate-y-2 "  src="/facebook.svg" alt="" /></a>
-      <a href="https://x.com/CSESI_Club"><img className="h-5 transition-all duration-300 hover:-translate-y-2 " src="/x.svg" alt="" /></a>
-      <a href="https://www.instagram.com/cse.club/"><img className="h-5 transition-all duration-300 hover:-translate-y-2 "  src="/instagram.svg" alt="" /></a>
-      <a href="https://www.youtube.com/channel/UCHgeF6ELJW0Pt1vYoAomCig"><img className="h-5 transition-all duration-300 hover:-translate-y-2 "  src="/youtube.svg" alt="" /></a>
-             </div>
-
-              <p>Copyright © 2025 Club Scientifique de l'ESI. All Rights Reserved</p>
+            <footer className="flex flex-col gap-4  text-center  mt-10 text-gray-500 dark:text-gray-400 text-sm">
+              <div className="border border-gray-700"></div>
+                      <div className="flex gap-4 justify-center mt-4 mb-4">
+                        <a href="https://www.instagram.com/cse.club/" target="_blank">
+                          <Image
+                            src="/instagramwhite.svg"
+                            alt="Instagram"
+                            width={30}
+                            height={30}
+                            className="hover:scale-110"
+                          />
+                        </a>
+                        <a
+                          href="https://www.facebook.com/club.scientifique.esi"
+                          target="_blank"
+                        >
+                          <Image
+                            src="/facebookwhite.svg"
+                            alt="Facebook"
+                            width={30}
+                            height={30}
+                            className="hover:scale-110"
+                          />
+                        </a>
+                        <a href="https://x.com/CSESI_Club" target="_blank">
+                          <Image
+                            src="/xwhite.svg"
+                            alt="Twitter"
+                            width={30}
+                            height={30}
+                            className="hover:scale-110"
+                          />
+                        </a>
+                        <a href="https://www.linkedin.com/company/cse-club/" target="_blank">
+                          <Image
+                            src="/linkedinwhite.svg"
+                            alt="LinkedIn"
+                            width={30}
+                            height={30}
+                            className="hover:scale-110"
+                          />
+                        </a>
+                        <a
+                          href="https://www.youtube.com/channel/UCHgeF6ELJW0Pt1vYoAomCig"
+                          target="_blank"
+                        >
+                          <Image
+                            src="/youtubewhite.svg"
+                            alt="YouTube"
+                            width={30}
+                            height={30}
+                            className="hover:scale-110"
+                          />
+                        </a>
+                      </div>
+                      <p className="text-gray-400 pb-2 flex justify-center text-[11px] font-light">
+                        Copyright &copy; <span>{new Date().getFullYear()}</span>&nbsp;Club
+                        Scientifique de l'ESI. All Rights Reserved.
+                      </p>
+                    
             </footer>
           </div>
         </div>

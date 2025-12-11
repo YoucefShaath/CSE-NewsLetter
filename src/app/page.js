@@ -9,7 +9,7 @@ import ManageSubscriptions from "@/Components/ManageSubscriptions/managesub.jsx"
 export default function Hom() {
   return (
     <div className="">
-      <ManageSubscriptions/>
+      <Home />
     </div>
   );
 }
