@@ -8,7 +8,7 @@ export default function LogIn() {
 
   return (
     <div className="flex h-screen">
-      <div className="hidden md:block w-[50%] bg-white">
+      <div className="hidden  md:block w-[50%] bg-white">
         <div className="flex flex-col items-start justify-center h-full px-50">
           <span className="text-4xl font-bold">Log In</span>
           <input
@@ -189,7 +189,7 @@ export default function LogIn() {
             <span className="mx-2 text-gray-600">or</span>
             <div className="border border-gray-300 flex-1"></div>
           </div>
-          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-80 border border-white border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-80  border-white border-2 hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
             Sign In with Google
             <Image
               src="/google.svg"

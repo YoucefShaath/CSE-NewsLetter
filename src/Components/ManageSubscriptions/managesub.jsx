@@ -44,7 +44,7 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-cover bg-[url('/bg-persInfsm.png')]  md:bg-[url('/bg-persInf.png')] bg-dark-blue tracking-[2px] " style={{ fontFamily: 'Times New Roman' }} >
+    <div className="relative flex min-h-screen w-full flex-col bg-cover bg-[url('/bg-persInfsm.png')]  md:bg-[url('/bg-persInf.png')] bg-dark-blue  "  >
       <div className="flex h-full grow flex-col">
         {/* Header */}
         <Navbar />  
