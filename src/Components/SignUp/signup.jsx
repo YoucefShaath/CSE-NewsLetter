@@ -3,10 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   const [showPassword1, setShowPassword1] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="md:flex h-screen">
@@ -127,6 +129,7 @@ export default function SignUp() {
             </button>
           </div>
           <button
+            onClick={() => router.push("/login")}
             className="group bg-dark-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue 
             border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
           >
@@ -296,6 +299,7 @@ export default function SignUp() {
             </button>
           </div>
           <button
+            onClick={() => router.push("/login")}
             className="group bg-light-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue 
             border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
           >
