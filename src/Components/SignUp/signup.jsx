@@ -6,7 +6,7 @@ import { useState } from "react";
 export default function SignUp() {
     const [showPassword1, setShowPassword1] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
-
+            
   return <div className="md:flex h-screen">
         <div className="hidden md:block w-[50%] bg-white">
             <div className="flex flex-col items-start justify-center h-full px-50">
