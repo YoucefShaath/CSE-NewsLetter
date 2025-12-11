@@ -11,7 +11,7 @@ export default function Navbar() {
 
   return (
     <div
-      className={`fixed top-0 w-full h-16 flex items-center justify-between px-8 z-50 shadow-md transition-colors duration-300 ${
+      className={`fixed top-0 w-full h-16 flex items-center justify-between px-4 md:px-8 z-50 shadow-md transition-colors duration-300 ${
         isDark ? "bg-dark-blue" : "bg-white"
       }`}
     >
@@ -22,7 +22,7 @@ export default function Navbar() {
         height={35}
       />
       <span
-        className={`text-xl font-semibold ml-12 font-eb-garamond ${
+        className={`absolute left-1/2 transform -translate-x-1/2 text-xl font-semibold font-eb-garamond hidden md:block ${
           isDark ? "text-white" : "text-dark-blue"
         }`}
       >
@@ -31,7 +31,7 @@ export default function Navbar() {
       <div className="space-x-4 flex items-center">
         <Link href="/login">
           <button
-            className={`border rounded-full px-8 py-2 transition cursor-pointer ${
+            className={`border rounded-full px-6 py-2 text-sm md:text-base md:px-8 transition cursor-pointer ${
               isDark
                 ? "text-white border-white hover:bg-white hover:text-dark-blue"
                 : "text-dark-blue border-dark-blue hover:bg-dark-blue hover:text-white"
@@ -40,7 +40,7 @@ export default function Navbar() {
             Log In
           </button>
         </Link>
-        <button onClick={toggleTheme} className="cursor-pointer ml-4">
+        <button onClick={toggleTheme} className="cursor-pointer ml-2 md:ml-4">
           <Image
             src={isDark ? "/sunwhite.svg" : "/moondark.svg"}
             alt="Theme Toggle"

@@ -11,32 +11,31 @@ export default function Home() {
   return (
     <>
       <div
-        className={`flex flex-col text-center items-center justify-between min-h-screen py-8 transition-colors duration-300 ${
+        className={`flex flex-col text-center items-center justify-between min-h-screen py-8 transition-colors duration-300 overflow-hidden ${
           isDark ? "bg-dark-blue" : "bg-white"
         }`}
       >
-        <div className="flex-1 flex flex-col items-center justify-center mt-20">
+        <div className="flex-1 flex flex-col items-center justify-center mt-20 relative w-full">
           <Image
             src="/circle.svg"
             alt="Decoration"
             width={500}
             height={500}
-            className="absolute top-16 opacity-100"
-            
+            className="absolute top-16 opacity-100 max-w-full"
           />
           <Image
             src="/glow.svg"
             alt="Glow Decoration"
             width={600}
             height={600}
-            className="absolute -left-40 -top-28 opacity-50"
+            className="absolute -left-40 -top-28 opacity-50 max-w-full"
           />
           <Image
             src="/glow.svg"
             alt="Glow Decoration"
             width={600}
             height={600}
-            className="absolute right-0 bottom-0 opacity-50"
+            className="absolute right-0 bottom-0 opacity-50 max-w-full"
           />
           <h1
             className={`text-4xl font-bold font-eb-garamond mb-4 mt-20 ${
