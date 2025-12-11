@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { use, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LogIn() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="flex h-screen">
@@ -65,7 +68,10 @@ export default function LogIn() {
               )}
             </button>
           </div>
-          <button className="group bg-dark-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+          <button
+            onClick={() => router.push("/general")}
+            className="group bg-dark-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+          >
             <span className="inline-block group-hover:translate-x-3 transition-transform duration-300">
               Log In
             </span>
@@ -94,12 +100,12 @@ export default function LogIn() {
           </button>
           <span className="mt-4">
             Don't have an account?{" "}
-            <a
-              href="#"
+            <Link
+              href="/signup"
               className="text-light-blue font-semibold hover:underline transition-all"
             >
               Sign Up
-            </a>
+            </Link>
           </span>
         </div>
       </div>
@@ -172,7 +178,10 @@ export default function LogIn() {
               )}
             </button>
           </div>
-          <button className="group bg-light-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+          <button
+            onClick={() => router.push("/general")}
+            className="group bg-light-blue text-white rounded-md px-4 py-2 mt-6 w-80 hover:bg-white hover:text-dark-blue border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+          >
             <span className="inline-block group-hover:translate-x-3 transition-transform duration-300">
               Log In
             </span>
@@ -201,12 +210,12 @@ export default function LogIn() {
           </button>
           <span className="mt-4">
             Don't have an account?{" "}
-            <a
-              href="#"
+            <Link
+              href="/signup"
               className="text-light-blue font-semibold hover:underline transition-all"
             >
               Sign Up
-            </a>
+            </Link>
           </span>
         </div>
       </div>

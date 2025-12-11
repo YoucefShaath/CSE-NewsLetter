@@ -24,7 +24,7 @@ export default function Post(props) {
   return (
     <>
       <div
-        className="w-full max-w-[350px] rounded-xl bg-white flex flex-col relative gap-5 border border-gray-200 overflow-hidden shadow-[0px_0px_0px_2px_rgba(6,24,44,0.4),0px_4px_6px_-1px_rgba(6,24,44,0.65),inset_0px_1px_0px_rgba(255,255,255,0.08)] transition-transform duration-300 hover:scale-110 cursor-pointer"
+        className="w-full max-w-[350px] rounded-xl bg-white flex flex-col relative gap-5 border border-gray-200 overflow-hidden shadow-[0px_0px_0px_2px_rgba(6,24,44,0.4),0px_4px_6px_-1px_rgba(6,24,44,0.65),inset_0px_1px_0px_rgba(255,255,255,0.08)] transition-transform duration-300 hover:scale-102 cursor-pointer"
         onClick={() => setIsOpen(true)}
       >
         <Image
