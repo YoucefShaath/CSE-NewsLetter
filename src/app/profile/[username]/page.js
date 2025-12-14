@@ -1,68 +1,94 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Profile from "@/Components/Profile/profile.jsx";
 import Navbar from "@/Components/NavBar/Logedinnavbar.jsx";
 import { useAuth } from "@/context/AuthContext";
 
-export default function Page() {
-  const { user: authUser, loading: authLoading } = useAuth();
+export default function UserProfilePage() {
+  const { username } = useParams();
+  const { user: loggedInUser } = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [likedPosts, setLikedPosts] = useState([]);
   const [savedPosts, setSavedPosts] = useState([]);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!authUser) {
-      setLoading(false);
-      return;
-    }
-
-    async function fetchData() {
+    async function fetchUser() {
       try {
-        const username = authUser.username;
-
-        const userRes = await fetch(
+        const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/`
         );
-        if (userRes.ok) {
-          const data = await userRes.json();
+
+        if (res.ok) {
+          const data = await res.json();
           setUserData(data);
         } else {
-          setUserData(authUser);
+          console.warn(
+            `Could not fetch user profile for ${username}. Status: ${res.status}`
+          );
         }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
+    if (username) {
+      fetchUser();
+    }
+  }, [username, loggedInUser]);
+
+  useEffect(() => {
+    async function fetchUserPosts() {
+      try {
         const likedRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/liked/`
         );
         if (likedRes.ok) {
           const data = await likedRes.json();
           setLikedPosts(Array.isArray(data) ? data : data.results || []);
-        }
-
-        const token = localStorage.getItem("token");
-        const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
-        if (token) {
-          const savedRes = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/saved/`,
-            {
-              headers: { Authorization: `${authPrefix} ${token}` },
-            }
-          );
-          if (savedRes.ok) {
-            const data = await savedRes.json();
-            setSavedPosts(Array.isArray(data) ? data : data.results || []);
-          }
+        } else {
+          console.error(`Failed to fetch liked posts: ${likedRes.status}`);
         }
       } catch (error) {
-        console.error("Error fetching profile data:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching liked posts:", error);
+      }
+
+      try {
+        const token = localStorage.getItem("token");
+        const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
+
+        const headers = {};
+        if (token) {
+          headers.Authorization = `${authPrefix} ${token}`;
+        }
+
+        const savedRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/saved/`,
+          {
+            headers: headers,
+          }
+        );
+
+        if (savedRes.ok) {
+          const data = await savedRes.json();
+          setSavedPosts(Array.isArray(data) ? data : data.results || []);
+        } else {
+          console.error(`Failed to fetch saved posts: ${savedRes.status}`);
+          setSavedPosts([]);
+        }
+      } catch (error) {
+        console.error("Error fetching saved posts:", error);
+        setSavedPosts([]);
       }
     }
 
-    fetchData();
-  }, [authUser, authLoading]);
+    if (username) {
+      fetchUserPosts();
+    }
+  }, [username, loggedInUser]);
 
   const getImageUrl = (path) => {
     if (!path) return "/hackitpic.png";
@@ -74,14 +100,15 @@ export default function Page() {
 
   const displayName = userData
     ? `${userData.first_name} ${userData.last_name}`.trim() || userData.username
-    : "User Name";
+    : username;
+
   const displayRole = userData?.role || "Member";
-  const displayBio = userData?.bio || "This is your profile.";
+
   const displayImage = userData?.image
     ? getImageUrl(userData.image)
     : "/hackitpic.png";
 
-  if (loading || authLoading) {
+  if (loading) {
     return (
       <div>
         <Navbar />
@@ -98,11 +125,14 @@ export default function Page() {
       <Profile
         name={displayName}
         role={displayRole}
-        bio={displayBio}
+        bio={`Profile of ${displayName}`}
         image={displayImage}
         likedPosts={likedPosts}
         savedPosts={savedPosts}
-        isOwnProfile={true}
+        isOwnProfile={
+          loggedInUser &&
+          loggedInUser.username?.toLowerCase() === username?.toLowerCase()
+        }
       />
     </div>
   );

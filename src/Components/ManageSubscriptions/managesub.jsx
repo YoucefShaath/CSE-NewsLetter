@@ -24,7 +24,7 @@ export default function SubscriptionPage() {
     },
     {
       id: 3,
-      name: "Relations and Events",
+      name: "Relev/Relex",
       description:
         "Highlights from key tech events, community updates, and insights into partnerships, collaborations, and industry happenings.",
       following: false,
@@ -43,6 +43,12 @@ export default function SubscriptionPage() {
         "Latest developer-focused news, from new tools and frameworks to coding techniques and performance-driven engineering practices.",
       following: false,
     },
+    {
+      id: 6,
+      name:"Multimedia",
+      description:"Latest updates and trends in multimedia production, including video, audio, animation, and interactive content.",
+      following: true,
+    }
   ]);
 
   const toggleFollow = (id) => {
