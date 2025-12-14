@@ -10,29 +10,128 @@ export default function SignUp() {
   const [showPassword2, setShowPassword2] = useState(false);
   const router = useRouter();
 
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSignup = async () => {
+    setError("");
+    setLoading(true);
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const signupData = {
+        username: formData.username,
+        email: formData.email,
+        password1: formData.password,
+        password2: formData.confirmPassword,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+      };
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/dj-rest-auth/registration/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(signupData),
+        }
+      );
+
+      const text = await res.text();
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {}
+
+      if (res.ok) {
+        router.push("/login");
+      } else {
+        let errorMsg = "Signup failed";
+        if (data && typeof data === "object") {
+          errorMsg = Object.entries(data)
+            .map(([key, messages]) => {
+              const msg = Array.isArray(messages)
+                ? messages.join(" ")
+                : messages;
+              return `${key}: ${msg}`;
+            })
+            .join(", ");
+        } else if (text) {
+        }
+        setError(errorMsg);
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="md:flex h-screen">
       <div className="hidden md:block w-[50%] bg-white">
         <div className="flex flex-col items-start justify-center h-full px-50">
           <span className="text-4xl ">Sign Up</span>
+          <div className="flex gap-4 mt-6 w-full max-w-xs">
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              placeholder="First Name"
+              className="border border-gray-300 rounded-md px-4 py-2 w-full"
+            />
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              placeholder="Last Name"
+              className="border border-gray-300 rounded-md px-4 py-2 w-full"
+            />
+          </div>
           <input
             type="text"
-            placeholder="Full Name"
-            className="border border-gray-300 rounded-md px-4 py-2 mt-6 w-full max-w-xs"
-          />
-          <input
-            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
             placeholder="Username"
             className="border border-gray-300 rounded-md px-4 py-2 mt-4 w-full max-w-xs"
           />
           <input
             type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             placeholder="Email"
             className="border border-gray-300 rounded-md px-4 py-2 mt-4 w-full max-w-xs"
           />
           <div className="relative mt-4 w-full max-w-xs">
             <input
               type={showPassword1 ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               placeholder="Password"
               className="border border-gray-300 rounded-md px-4 py-2 w-full"
             />
@@ -82,6 +181,9 @@ export default function SignUp() {
           <div className="relative mt-4 w-full max-w-xs">
             <input
               type={showPassword2 ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
               placeholder="Confirm Password"
               className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 w-full"
             />
@@ -128,13 +230,17 @@ export default function SignUp() {
               )}
             </button>
           </div>
+          {error && (
+            <p className="text-red-500 text-sm mt-2 max-w-xs">{error}</p>
+          )}
           <button
-            onClick={() => router.push("/login")}
+            onClick={handleSignup}
+            disabled={loading}
             className="group bg-dark-blue text-white rounded-md px-4 py-2 mt-6 w-full max-w-xs hover:bg-white hover:text-dark-blue 
-            border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+            border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg disabled:opacity-50"
           >
             <span className="inline-block group-hover:translate-x-3 transition-transform duration-300">
-              Sign Up
+              {loading ? "Signing Up..." : "Sign Up"}
             </span>
             <Image
               src="/arrow.svg"
@@ -185,24 +291,46 @@ export default function SignUp() {
       <div className="block md:hidden w-full h-screen bg-dark-blue flex items-center text-white justify-center">
         <div className="flex flex-col items-start justify-center h-full">
           <span className="text-4xl ">Sign Up</span>
+          <div className="flex gap-4 mt-6 w-full max-w-xs">
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              placeholder="First Name"
+              className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 w-full"
+            />
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              placeholder="Last Name"
+              className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 w-full"
+            />
+          </div>
           <input
             type="text"
-            placeholder="Full Name"
-            className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 mt-6 w-full max-w-xs"
-          />
-          <input
-            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
             placeholder="Username"
             className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 mt-4 w-full max-w-xs"
           />
           <input
             type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             placeholder="Email"
             className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 mt-4 w-full max-w-xs"
           />
           <div className="relative mt-4 w-full max-w-xs">
             <input
               type={showPassword1 ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               placeholder="Password"
               className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 w-full"
             />
@@ -252,6 +380,9 @@ export default function SignUp() {
           <div className="relative mt-4 w-full max-w-xs">
             <input
               type={showPassword2 ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
               placeholder="Confirm Password"
               className="bg-white text-dark-blue border border-gray-300 rounded-md px-4 py-2 w-full"
             />
@@ -298,13 +429,17 @@ export default function SignUp() {
               )}
             </button>
           </div>
+          {error && (
+            <p className="text-red-500 text-sm mt-2 max-w-xs">{error}</p>
+          )}
           <button
-            onClick={() => router.push("/login")}
+            onClick={handleSignup}
+            disabled={loading}
             className="group bg-light-blue text-white rounded-md px-4 py-2 mt-6 w-full max-w-xs hover:bg-white hover:text-dark-blue 
-            border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+            border-[2px] border-dark-blue transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg disabled:opacity-50"
           >
             <span className="inline-block group-hover:translate-x-3 transition-transform duration-300">
-              Sign Up
+              {loading ? "Signing Up..." : "Sign Up"}
             </span>
             <Image
               src="/arrow.svg"

@@ -2,12 +2,144 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "../../context/AuthContext";
+
 export default function Post(props) {
-  const [liked, setLiked] = useState(false);
+  const { user } = useAuth();
+  const [liked, setLiked] = useState(props.isLiked || false);
   const [isOpen, setIsOpen] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(props.isSaved || false);
   const [focusOnOpen, setFocusOnOpen] = useState(false);
+  const [likeCount, setLikeCount] = useState(props.likes || 0);
+  const [commentCount, setCommentCount] = useState(props.comments || 0);
+
+  useEffect(() => {
+    setLikeCount(props.likes || 0);
+  }, [props.likes]);
+
+  useEffect(() => {
+    setCommentCount(props.comments || 0);
+  }, [props.comments]);
+
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [loadingComments, setLoadingComments] = useState(false);
+
   const commentInputRef = useRef(null);
+
+  const getImageUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith("http")) return path;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "";
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+    return `${baseUrl}${cleanPath}`;
+  };
+
+  const getAuthorInfo = () => {
+    if (typeof props.author === "object" && props.author !== null) {
+      return {
+        name:
+          `${props.author.first_name} ${props.author.last_name}`.trim() ||
+          props.author.username,
+        image: getImageUrl(props.author.image),
+        username: props.author.username,
+      };
+    }
+    if (typeof props.author === "string") {
+      return {
+        name: props.author,
+        image: props.authorImage || "/hackitpic.png",
+        username: props.authorUsername || "unknown",
+      };
+    }
+    return {
+      name: "Unknown Author",
+      image: "/hackitpic.png",
+      username: "unknown",
+    };
+  };
+
+  const authorInfo = getAuthorInfo();
+  const userImage = getImageUrl(user?.image) || "/hackitpic.png";
+  const postImage = getImageUrl(props.image);
+
+  const handleLike = async (e) => {
+    e.stopPropagation();
+    if (!user) {
+      alert("Please login to like posts");
+      return;
+    }
+
+    if (!props.id) {
+      return;
+    }
+
+    const previousLiked = liked;
+    const previousCount = likeCount;
+    setLiked(!liked);
+    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+
+    try {
+      const token = localStorage.getItem("token");
+      const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${props.id}/like/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `${authPrefix} ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!res.ok) {
+        setLiked(previousLiked);
+        setLikeCount(previousCount);
+      }
+    } catch (error) {
+      setLiked(previousLiked);
+      setLikeCount(previousCount);
+    }
+  };
+
+  const handleSave = async (e) => {
+    e.stopPropagation();
+    if (!user) {
+      alert("Please login to save posts");
+      return;
+    }
+
+    if (!props.id) {
+      return;
+    }
+
+    const previousSaved = saved;
+    setSaved(!saved);
+
+    try {
+      const token = localStorage.getItem("token");
+      const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${props.id}/save/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `${authPrefix} ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!res.ok) {
+        setSaved(previousSaved);
+      }
+    } catch (error) {
+      setSaved(previousSaved);
+    }
+  };
 
   const handleCommentClick = () => {
     if (commentInputRef.current) {
@@ -16,11 +148,77 @@ export default function Post(props) {
   };
 
   useEffect(() => {
+    if (isOpen) {
+      fetchComments();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     if (isOpen && focusOnOpen && commentInputRef.current) {
       commentInputRef.current.focus();
       setFocusOnOpen(false);
     }
   }, [isOpen, focusOnOpen]);
+
+  const fetchComments = async () => {
+    if (!props.id) return;
+    setLoadingComments(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${props.id}/comments/`
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setComments(data);
+        setCommentCount(data.length);
+      }
+    } catch (error) {
+    } finally {
+      setLoadingComments(false);
+    }
+  };
+
+  const handlePostComment = async () => {
+    if (!newComment.trim()) return;
+
+    if (!props.id) {
+      alert("Error: Cannot post comment because Post ID is missing.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${props.id}/comments/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${authPrefix} ${token}`,
+          },
+          body: JSON.stringify({ content: newComment }),
+        }
+      );
+
+      if (res.ok) {
+        const savedComment = await res.json();
+        setComments([savedComment, ...comments]);
+        setCommentCount((prev) => prev + 1);
+        setNewComment("");
+      } else {
+        const errorText = await res.text();
+        alert(`Error: ${res.status} - ${errorText}`);
+      }
+    } catch (error) {}
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handlePostComment();
+    }
+  };
 
   return (
     <>
@@ -28,15 +226,17 @@ export default function Post(props) {
         className="w-full max-w-[350px] rounded-xl bg-white flex flex-col relative gap-5 border border-gray-200 overflow-hidden shadow-[0px_0px_0px_2px_rgba(6,24,44,0.4),0px_4px_6px_-1px_rgba(6,24,44,0.65),inset_0px_1px_0px_rgba(255,255,255,0.08)] transition-transform duration-300 hover:scale-102 cursor-pointer"
         onClick={() => setIsOpen(true)}
       >
-        <Image
-          src={props.image}
-          alt={props.title}
-          width={350}
-          height={300}
-          className="w-full object-cover"
-        />
-        <div className="gap-2 flex flex-col px-4">
-          <h1 className="text-blue-950 text-4xl mb-4 font-semibold">
+        {postImage && (
+          <img
+            src={postImage}
+            alt={props.title}
+            width={350}
+            height={300}
+            className="w-full object-cover h-[200px]"
+          />
+        )}
+        <div className="gap-2 flex flex-col px-4 pt-4">
+          <h1 className="text-blue-950 text-2xl mb-2 font-semibold">
             {props.title}
           </h1>
           <p className="text-gray-600 text-sm mb-4">
@@ -45,27 +245,42 @@ export default function Post(props) {
               : props.description}
           </p>
         </div>
-        <div className="flex items-center px-4 gap-6">
+
+        <div className="px-4 flex items-center gap-2 mb-2">
+          <Link
+            href={
+              authorInfo.username && authorInfo.username !== "unknown"
+                ? `/profile/${authorInfo.username}`
+                : "#"
+            }
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={authorInfo.image}
+              className="w-6 h-6 rounded-full object-cover"
+              alt="author"
+            />
+            <span className="text-xs text-gray-500 hover:underline">
+              {authorInfo.name}
+            </span>
+          </Link>
+        </div>
+
+        <div className="flex items-center px-4 gap-6 pb-4">
           <button
-            className="flex items-center gap-2 mb-4 cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              setLiked(!liked);
-            }}
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={handleLike}
           >
             {liked ? (
               <Image src="/redheart.svg" alt="liked" width={20} height={20} />
             ) : (
               <Image src="/heart.svg" alt="not liked" width={20} height={20} />
             )}
-            {liked ? (
-              <span className="text-red-500">{props.likes}</span>
-            ) : (
-              <span>{props.likes}</span>
-            )}
+            <span className={liked ? "text-red-500" : ""}>{likeCount}</span>
           </button>
           <button
-            className="flex items-center gap-2 mb-4 cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               setFocusOnOpen(true);
@@ -73,14 +288,11 @@ export default function Post(props) {
             }}
           >
             <Image src="/comment.svg" alt="comment" width={20} height={20} />
-            <span>{props.comments}</span>
+            <span>{commentCount}</span>
           </button>
           <button
-            className="flex items-center gap-2 mb-4 cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSaved(!saved);
-            }}
+            className="flex items-center gap-2 cursor-pointer ml-auto"
+            onClick={handleSave}
           >
             <Image
               src={saved ? "/saved.svg" : "/save.svg"}
@@ -88,10 +300,6 @@ export default function Post(props) {
               width={22}
               height={22}
               className="cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSaved(!saved);
-              }}
             />
           </button>
         </div>
@@ -106,41 +314,51 @@ export default function Post(props) {
             className="bg-white rounded-2xl overflow-hidden flex w-full max-w-5xl h-[85vh] shadow-2xl animate-in fade-in zoom-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Left Side - Image */}
-            <div className="w-1/2 relative bg-gray-100 hidden md:block">
-              <Image
-                src={props.image}
-                alt={props.title}
-                fill
-                className="object-cover"
-              />
+            <div className="w-1/2 relative bg-gray-100 hidden md:flex items-center justify-center">
+              {postImage ? (
+                <img
+                  src={postImage}
+                  alt={props.title}
+                  className="object-contain max-h-full w-full"
+                />
+              ) : (
+                <div className="text-gray-400">No Image</div>
+              )}
             </div>
 
-            {/* Right Side - Content */}
             <div className="w-full md:w-1/2 flex flex-col p-8 h-full">
-              {/* Header */}
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-3">
                   <Link
-                    href="/profile"
+                    href={
+                      authorInfo.username && authorInfo.username !== "unknown"
+                        ? `/profile/${authorInfo.username}`
+                        : "#"
+                    }
                     className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden relative block"
                   >
-                    {/* Placeholder Avatar */}
-                    <Image
-                      src={props.authorImage}
-                      fill
-                      className="object-cover cursor-pointer"
+                    <img
+                      src={authorInfo.image}
+                      className="object-cover w-full h-full cursor-pointer"
                       alt="Author"
                     />
                   </Link>
                   <div>
-                    <Link href="/profile">
+                    <Link
+                      href={
+                        authorInfo.username && authorInfo.username !== "unknown"
+                          ? `/profile/${authorInfo.username}`
+                          : "#"
+                      }
+                    >
                       <h3 className="font-bold text-sm text-gray-900 hover:underline cursor-pointer">
-                        {props.author}
+                        {authorInfo.name}
                       </h3>
                     </Link>
                     <p className="text-xs text-gray-500">
-                      {props.publishedDate}
+                      {new Date(
+                        props.created_at || Date.now()
+                      ).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -165,7 +383,6 @@ export default function Post(props) {
                 </button>
               </div>
 
-              {/* Scrollable Body */}
               <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
                 <p className="text-blue-600 text-xs font-bold tracking-wider mb-2 uppercase">
                   {props.department}
@@ -176,49 +393,67 @@ export default function Post(props) {
                 <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-wrap">
                   {props.description}
                 </p>
-                <div className="w-full h-48 relative mt-4 md:hidden rounded-lg overflow-hidden">
-                  <Image
-                    src={props.image}
-                    alt={props.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
 
-                {/* Comments Section */}
-                <div className="mt-8 border-t border-gray-100 pt-6">
-                  <h4 className="font-bold text-gray-900 mb-4">Comments</h4>
-
-                  {/* Example Comment */}
-                  <div className="flex gap-3 mb-4">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden relative flex-shrink-0">
-                      <Image
-                        src="/hackitpic.png"
-                        fill
-                        className="object-cover"
-                        alt="User"
-                      />
-                    </div>
-                    <div className="bg-gray-50 rounded-2xl p-3 flex-1">
-                      <div className="flex justify-between items-baseline mb-1">
-                        <span className="font-bold text-sm text-gray-900">
-                          Jane Smith
-                        </span>
-                        <span className="text-xs text-gray-500">2h ago</span>
-                      </div>
-                      <p className="text-sm text-gray-700">
-                        This looks amazing! Can't wait to see more updates.
-                      </p>
-                    </div>
+                {postImage && (
+                  <div className="w-full h-48 relative mt-4 md:hidden rounded-lg overflow-hidden">
+                    <img
+                      src={postImage}
+                      alt={props.title}
+                      className="object-cover w-full h-full"
+                    />
                   </div>
+                )}
+
+                <div className="mt-8 border-t border-gray-100 pt-6">
+                  <h4 className="font-bold text-gray-900 mb-4">
+                    Comments ({comments.length})
+                  </h4>
+
+                  {loadingComments ? (
+                    <p className="text-sm text-gray-500">Loading comments...</p>
+                  ) : comments.length === 0 ? (
+                    <p className="text-sm text-gray-400 italic">
+                      No comments yet. Be the first!
+                    </p>
+                  ) : (
+                    comments.map((comment) => (
+                      <div key={comment.id} className="flex gap-3 mb-4">
+                        <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden relative flex-shrink-0">
+                          <img
+                            src={
+                              getImageUrl(comment.author?.image) ||
+                              "/hackitpic.png"
+                            }
+                            className="object-cover w-full h-full"
+                            alt="User"
+                          />
+                        </div>
+                        <div className="bg-gray-50 rounded-2xl p-3 flex-1">
+                          <div className="flex justify-between items-baseline mb-1">
+                            <span className="font-bold text-sm text-gray-900">
+                              {comment.author?.first_name}{" "}
+                              {comment.author?.last_name}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {new Date(
+                                comment.created_at
+                              ).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-700">
+                            {comment.content}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
-              {/* Footer - Stats */}
               <div className="flex items-center gap-6 py-4 border-t border-gray-100 mt-4">
                 <button
                   className="flex cursor-pointer items-center gap-2 text-gray-600"
-                  onClick={() => setLiked(!liked)}
+                  onClick={handleLike}
                 >
                   {liked ? (
                     <Image
@@ -240,7 +475,7 @@ export default function Post(props) {
                       liked ? "text-red-500 font-medium" : "font-medium"
                     }
                   >
-                    {props.likes}
+                    {likeCount}
                   </span>
                 </button>
                 <div
@@ -253,7 +488,7 @@ export default function Post(props) {
                     width={20}
                     height={20}
                   />
-                  <span className="font-medium">{props.comments}</span>
+                  <span className="font-medium">{comments.length}</span>
                 </div>
                 <div>
                   <Image
@@ -262,28 +497,33 @@ export default function Post(props) {
                     width={22}
                     height={22}
                     className="cursor-pointer"
-                    onClick={() => setSaved(!saved)}
+                    onClick={handleSave}
                   />
                 </div>
               </div>
 
-              {/* Comment Input */}
               <div className="flex items-center gap-3 mt-2 cursor-pointer">
-                <Image
-                  src={props.userImage}
-                  alt="author"
+                <img
+                  src={userImage}
+                  alt="current user"
                   width={32}
                   height={32}
-                  className="rounded-full"
+                  className="rounded-full object-cover w-8 h-8"
                 />
                 <div className="flex-1 relative">
                   <input
                     ref={commentInputRef}
                     type="text"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="Add a comment..."
                     className="w-full bg-gray-50 rounded-full py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 border border-transparent focus:border-blue-500 transition-all"
                   />
-                  <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-600 p-2 bg-blue-50 hover:bg-blue-200 rounded-full">
+                  <button
+                    onClick={handlePostComment}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-600 p-2 bg-blue-50 hover:bg-blue-200 rounded-full"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"

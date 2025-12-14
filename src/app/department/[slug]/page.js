@@ -10,6 +10,7 @@ import {
   FaUsers,
   FaBullhorn,
   FaHandshake,
+  FaCamera,
 } from "react-icons/fa";
 
 export default function Page() {
@@ -25,6 +26,7 @@ export default function Page() {
     hr: "HR",
     comm: "Communication",
     "relev-relex": "Relev/Relex",
+    multimedia: "Multimedia",
   };
 
   const departmentIcons = {
@@ -34,6 +36,7 @@ export default function Page() {
     hr: <FaUsers />,
     comm: <FaBullhorn />,
     "relev-relex": <FaHandshake />,
+    multimedia: <FaCamera />,
   };
 
   const departmentName = departmentNames[slug] || "Department";

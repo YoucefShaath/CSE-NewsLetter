@@ -1,21 +1,59 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
+
+// Helper to construct full image URL
+const getImageUrl = (path) => {
+  if (!path) return null;
+  if (path.startsWith("http")) return path;
+  // Remove double slashes if API_URL ends with / and path starts with /
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "";
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${baseUrl}${cleanPath}`;
+};
 
 export default function PersonalInformation() {
   const { theme } = useTheme();
+  const { user, login } = useAuth();
   const isDark = theme === "dark";
+  const [loading, setLoading] = useState(false);
+
+  const departments = [
+    "General",
+    "HR",
+    "Development",
+    "UI/UX",
+    "Design",
+    "Relev/Relex",
+    "Communication",
+    "Multimedia",
+  ];
 
   const [formData, setFormData] = useState({
-    username: "jordan.smith",
-    email: "jordan.smith@cse.corp",
-    password: "••••••••••••",
-    firstName: "Jordan",
-    lastName: "Smith",
-    department: "Software Engineering",
-    role: "Senior Software Engineer",
+    username: "",
+    email: "",
+    password: "••••••••••••", // Placeholder
+    firstName: "",
+    lastName: "",
+    department: "",
+    role: "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.username || "",
+        email: user.email || "",
+        password: "••••••••••••",
+        firstName: user.first_name || "",
+        lastName: user.last_name || "",
+        department: user.department || "",
+        role: user.role || "",
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     setFormData({
@@ -24,22 +62,111 @@ export default function PersonalInformation() {
     });
   };
 
-  const handleSave = () => {
-    console.log("Saving changes:", formData);
-    alert("Changes saved successfully!");
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
+
+      // Prepare payload - map camelCase to snake_case
+      const payload = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        username: formData.username,
+        department: formData.department,
+        role: formData.role,
+      };
+
+      // Only send password if it's changed from placeholder
+      // Note: Updating password usually requires a different endpoint or current password
+      // For now, we'll skip password update here to avoid errors
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/dj-rest-auth/user/`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${authPrefix} ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (res.ok) {
+        const updatedUser = await res.json();
+        // Update local user context
+        login(updatedUser, token);
+        alert("Changes saved successfully!");
+      } else {
+        const errorData = await res.json();
+        console.error("Failed to update profile:", errorData);
+        alert(`Failed to save changes: ${JSON.stringify(errorData)}`);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
-    setFormData({
-      username: "jordan.smith",
-      email: "jordan.smith@cse.corp",
-      password: "••••••••••••",
-      firstName: "Jordan",
-      lastName: "Smith",
-      department: "Software Engineering",
-      role: "Senior Software Engineer",
-    });
+    if (user) {
+      setFormData({
+        username: user.username || "",
+        email: user.email || "",
+        password: "••••••••••••",
+        firstName: user.first_name || "",
+        lastName: user.last_name || "",
+        department: user.department || "",
+        role: user.role || "",
+      });
+    }
   };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/dj-rest-auth/user/`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `${authPrefix} ${token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (res.ok) {
+        const updatedUser = await res.json();
+        login(updatedUser, token);
+        alert("Profile photo updated successfully!");
+      } else {
+        const errorData = await res.json();
+        console.error("Failed to upload image:", errorData);
+        alert("Failed to upload image.");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("An error occurred while uploading the image.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const userImage = getImageUrl(user?.image);
 
   return (
     <div
@@ -75,7 +202,20 @@ export default function PersonalInformation() {
                 <div className="flex w-full flex-col gap-6 sm:flex-row sm:justify-between sm:items-center">
                   <div className="flex gap-6 items-center">
                     <div className="relative group">
-                      <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-24 w-24 sm:h-32 sm:w-32 bg-blue"></div>
+                      <div className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-full overflow-hidden bg-gray-200">
+                        {userImage ? (
+                          // TEMPORARY DEBUGGING: Use standard img tag
+                          <img
+                            src={userImage}
+                            alt="Profile"
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-blue-500 text-white text-4xl">
+                            {formData.firstName?.[0] || "U"}
+                          </div>
+                        )}
+                      </div>
                       <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
                         <span className="text-white text-3xl">📷</span>
                       </div>
@@ -86,26 +226,35 @@ export default function PersonalInformation() {
                           isDark ? "text-white" : "text-dark-blue"
                         }`}
                       >
-                        Jordan Smith
+                        {formData.firstName} {formData.lastName}
                       </p>
                       <p
                         className={`text-base font-normal leading-normal ${
                           isDark ? "text-gray-400" : "text-gray-500"
                         }`}
                       >
-                        Senior Software Engineer
+                        {formData.role}
                       </p>
                     </div>
                   </div>
-                  <button
+                  <label
                     className={`flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 text-sm font-bold leading-normal w-full sm:w-auto ${
                       isDark
                         ? "bg-gray-800 hover:bg-gray-700 text-gray-200"
                         : "bg-gray-100 hover:bg-gray-200 text-gray-800"
                     }`}
                   >
-                    <span className="truncate">Upload Photo</span>
-                  </button>
+                    <span className="truncate">
+                      {loading ? "Uploading..." : "Upload Photo"}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                      disabled={loading}
+                    />
+                  </label>
                 </div>
               </div>
 
@@ -265,18 +414,26 @@ export default function PersonalInformation() {
                     >
                       Department
                     </label>
-                    <input
-                      className={`flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded focus:outline-0 focus:ring-2 focus:ring-blue-500/50 border focus:border-blue-600 h-12 p-[15px] text-base font-normal leading-normal ${
+                    <select
+                      className={`flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded focus:outline-0 focus:ring-2 focus:ring-blue-500/50 border focus:border-blue-600 h-12 p-[15px] text-base font-normal leading-normal appearance-none ${
                         isDark
                           ? "text-gray-100 border-gray-700 bg-gray-950"
                           : "text-gray-900 border-gray-300 bg-white"
                       }`}
                       id="department"
                       name="department"
-                      type="text"
                       value={formData.department}
                       onChange={handleChange}
-                    />
+                    >
+                      <option value="" disabled>
+                        Select Department
+                      </option>
+                      {departments.map((dept) => (
+                        <option key={dept} value={dept}>
+                          {dept}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="flex flex-col min-w-40 flex-1 px-4 py-3">
                     <label
@@ -288,16 +445,16 @@ export default function PersonalInformation() {
                       Role/Position
                     </label>
                     <input
-                      className={`flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded focus:outline-0 focus:ring-2 focus:ring-blue-500/50 border focus:border-blue-600 h-12 p-[15px] text-base font-normal leading-normal ${
+                      className={`flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded focus:outline-0 border h-12 p-[15px] text-base font-normal leading-normal cursor-not-allowed opacity-70 ${
                         isDark
-                          ? "text-gray-100 border-gray-700 bg-gray-950"
-                          : "text-gray-900 border-gray-300 bg-white"
+                          ? "text-gray-400 border-gray-700 bg-gray-900"
+                          : "text-gray-500 border-gray-300 bg-gray-100"
                       }`}
                       id="role"
                       name="role"
                       type="text"
                       value={formData.role}
-                      onChange={handleChange}
+                      readOnly
                     />
                   </div>
                 </section>
@@ -321,9 +478,14 @@ export default function PersonalInformation() {
                 </button>
                 <button
                   onClick={handleSave}
-                  className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-blue-600 hover:bg-blue-700 text-white text-base font-bold leading-normal"
+                  disabled={loading}
+                  className={`flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-blue-600 hover:bg-blue-700 text-white text-base font-bold leading-normal ${
+                    loading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
-                  <span className="truncate">Save Changes</span>
+                  <span className="truncate">
+                    {loading ? "Saving..." : "Save Changes"}
+                  </span>
                 </button>
               </div>
             </main>
