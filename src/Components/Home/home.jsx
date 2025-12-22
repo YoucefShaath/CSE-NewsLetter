@@ -83,7 +83,7 @@ export default function Home() {
                 className="hover:scale-110"
               />
             </a>
-            <a
+            <a 
               href="https://www.facebook.com/club.scientifique.esi"
               target="_blank"
             >

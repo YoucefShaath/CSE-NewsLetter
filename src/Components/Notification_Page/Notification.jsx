@@ -1,44 +1,53 @@
 "use client";
 import Image from "next/image";
 import { useTheme } from "../../context/ThemeContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function NotificationPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [activeTab, setActiveTab] = useState("All");
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+ 
 
-  const notifications = [
-    {
-      id: 1,
-      department: "Design Department",
-      message:
-        "New design guidelines have been uploaded for the upcoming hackathon.",
-      time: "2 hours ago",
-      read: false,
-    },
-    {
-      id: 2,
-      department: "HR Department",
-      message: "Please review the updated policy regarding remote work.",
-      time: "5 hours ago",
-      read: true,
-    },
-    {
-      id: 3,
-      department: "Tech Team",
-      message: "Server maintenance is scheduled for this Friday at 10 PM.",
-      time: "1 day ago",
-      read: true,
-    },
-    {
-      id: 4,
-      department: "Events",
-      message: "Don't forget to register for the annual team building event!",
-      time: "2 days ago",
-      read: false,
-    },
-  ];
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/notifications/`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${authPrefix} ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+           throw new Error("Failed to fetch notifications");
+        }
+         
+
+        const data = await res.json();
+        setNotifications(data);
+      } catch (err) {
+        console.error("Notification fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  const filteredNotifications = notifications.filter((n) => {
+    if (activeTab === "Unread") return !n.is_read;
+    if (activeTab === "Mentions") return false; 
+    return true;
+  });
+
+
 
   return (
     <div
@@ -122,16 +131,25 @@ export default function NotificationPage() {
               : "bg-white/80 border-gray-200 shadow-xl"
           }`}
         >
-          <div className="divide-y divide-gray-200/10 dark:divide-white/10">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`p-6 sm:p-8 flex items-start gap-6 transition-colors duration-200 ${
-                  isDark ? "hover:bg-white/5" : "hover:bg-gray-50"
-                } ${!notification.read && isDark ? "bg-blue-500/10" : ""} ${
-                  !notification.read && !isDark ? "bg-blue-50" : ""
-                }`}
-              >
+          {loading ? (
+            <div className="p-10 text-center text-gray-400">
+              Loading notifications...
+            </div>
+          ) : filteredNotifications.length === 0 ? (
+            <div className="p-10 text-center text-gray-400">
+              No notifications
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200/10 dark:divide-white/10">
+              {notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className={`p-6 sm:p-8 flex items-start gap-6 transition-colors duration-200 ${
+                    isDark ? "hover:bg-white/5" : "hover:bg-gray-50"
+                  } ${!notification.read && isDark ? "bg-blue-500/10" : ""} ${
+                    !notification.read && !isDark ? "bg-blue-50" : ""
+                  }`}
+                >
                 {/* Avatar/Icon */}
                 <div
                   className={`shrink-0 w-16 h-16 rounded-full flex items-center justify-center text-2xl shadow-lg ${
@@ -158,7 +176,7 @@ export default function NotificationPage() {
                         isDark ? "text-gray-400" : "text-gray-500"
                       }`}
                     >
-                      {notification.time}
+                      {new Date(notification.time).toLocaleString()} 
                     </span>
                   </div>
                   <p
@@ -179,6 +197,7 @@ export default function NotificationPage() {
               </div>
             ))}
           </div>
+          )}
         </div>
       </div>
     </div>

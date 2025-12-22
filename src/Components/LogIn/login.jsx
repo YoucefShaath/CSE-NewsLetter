@@ -15,7 +15,7 @@ export default function LogIn() {
   const router = useRouter();
   const { login } = useAuth();
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e) => { 
     e.preventDefault();
     setError("");
     setLoading(true);
