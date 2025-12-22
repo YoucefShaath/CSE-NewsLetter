@@ -21,6 +21,12 @@ export default function Page() {
     async function fetchData() {
       try {
         const username = authUser.username;
+        const token = localStorage.getItem("token");
+        const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
+        const headers = {};
+        if (token) {
+          headers.Authorization = `${authPrefix} ${token}`;
+        }
 
         const userRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/`
@@ -33,25 +39,30 @@ export default function Page() {
         }
 
         const likedRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/liked/`
+          `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/liked/`,
+          { headers }
         );
         if (likedRes.ok) {
           const data = await likedRes.json();
-          setLikedPosts(Array.isArray(data) ? data : data.results || []);
+          let posts = Array.isArray(data) ? data : data.results || [];
+          // Since this is the user's own profile, they liked these posts.
+          posts = posts.map((p) => ({ ...p, is_liked: true }));
+          setLikedPosts(posts);
         }
 
-        const token = localStorage.getItem("token");
-        const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
         if (token) {
           const savedRes = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/saved/`,
             {
-              headers: { Authorization: `${authPrefix} ${token}` },
+              headers: headers,
             }
           );
           if (savedRes.ok) {
             const data = await savedRes.json();
-            setSavedPosts(Array.isArray(data) ? data : data.results || []);
+            let posts = Array.isArray(data) ? data : data.results || [];
+            // Since this is the user's own profile, they saved these posts.
+            posts = posts.map((p) => ({ ...p, is_saved: true }));
+            setSavedPosts(posts);
           }
         }
       } catch (error) {

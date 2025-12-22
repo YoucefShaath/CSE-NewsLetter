@@ -21,6 +21,14 @@ export default function Post(props) {
     setCommentCount(props.comments || 0);
   }, [props.comments]);
 
+  useEffect(() => {
+    setLiked(props.isLiked || false);
+  }, [props.isLiked]);
+
+  useEffect(() => {
+    setSaved(props.isSaved || false);
+  }, [props.isSaved]);
+
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loadingComments, setLoadingComments] = useState(false);
