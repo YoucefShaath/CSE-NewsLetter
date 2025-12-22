@@ -24,7 +24,7 @@ export default function DepartmentPage(props) {
 
   useEffect(() => {
     async function fetchPosts() {
-      setLoading(true);
+      setLoading(true); 
       try {
         const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/posts/`);
         if (props.departmentName && props.departmentName !== "General") {
