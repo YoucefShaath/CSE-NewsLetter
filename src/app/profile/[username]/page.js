@@ -42,13 +42,30 @@ export default function UserProfilePage() {
 
   useEffect(() => {
     async function fetchUserPosts() {
+      const token = localStorage.getItem("token");
+      const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
+      const headers = {};
+
+      if (token) {
+        headers.Authorization = `${authPrefix} ${token}`;
+      }
+
       try {
         const likedRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/liked/`
+          `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/liked/`,
+          {
+            headers: headers,
+          }
         );
         if (likedRes.ok) {
           const data = await likedRes.json();
-          setLikedPosts(Array.isArray(data) ? data : data.results || []);
+          let posts = Array.isArray(data) ? data : data.results || [];
+
+          if (loggedInUser && loggedInUser.username === username) {
+            posts = posts.map((post) => ({ ...post, is_liked: true }));
+          }
+
+          setLikedPosts(posts);
         } else {
           console.error(`Failed to fetch liked posts: ${likedRes.status}`);
         }
@@ -57,14 +74,6 @@ export default function UserProfilePage() {
       }
 
       try {
-        const token = localStorage.getItem("token");
-        const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
-
-        const headers = {};
-        if (token) {
-          headers.Authorization = `${authPrefix} ${token}`;
-        }
-
         const savedRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/users/${username}/saved/`,
           {
@@ -74,7 +83,13 @@ export default function UserProfilePage() {
 
         if (savedRes.ok) {
           const data = await savedRes.json();
-          setSavedPosts(Array.isArray(data) ? data : data.results || []);
+          let posts = Array.isArray(data) ? data : data.results || [];
+
+          if (loggedInUser && loggedInUser.username === username) {
+            posts = posts.map((post) => ({ ...post, is_saved: true }));
+          }
+
+          setSavedPosts(posts);
         } else {
           console.error(`Failed to fetch saved posts: ${savedRes.status}`);
           setSavedPosts([]);
