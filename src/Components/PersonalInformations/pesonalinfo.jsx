@@ -19,6 +19,7 @@ export default function PersonalInformation() {
   const { user, login } = useAuth();
   const isDark = theme === "dark";
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const departments = [
     "General",
@@ -79,8 +80,9 @@ export default function PersonalInformation() {
       };
 
       // Only send password if it's changed from placeholder
-      // Note: Updating password usually requires a different endpoint or current password
-      // For now, we'll skip password update here to avoid errors
+      if (formData.password && formData.password !== "••••••••••••") {
+        payload.password = formData.password;
+      }
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/dj-rest-auth/user/`,
@@ -316,29 +318,19 @@ export default function PersonalInformation() {
                       >
                         Password
                       </label>
-                      <div className="relative">
-                        <input
-                          className={`flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded focus:outline-0 focus:ring-2 focus:ring-blue-500/50 border focus:border-blue-600 h-12 p-[15px] pr-24 text-base font-normal leading-normal ${
-                            isDark
-                              ? "text-gray-100 border-gray-700 bg-gray-950"
-                              : "text-gray-900 border-gray-300 bg-white"
-                          }`}
-                          id="password"
-                          name="password"
-                          type="password"
-                          value={formData.password}
-                          onChange={handleChange}
-                        />
-                        <button
-                          className={`absolute inset-y-0 right-0 flex items-center px-4 ${
-                            isDark
-                              ? "text-gray-400 hover:text-blue-400"
-                              : "text-gray-500 hover:text-blue-600"
-                          }`}
-                        >
-                          Change
-                        </button>
-                      </div>
+                      <input
+                        className={`flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded focus:outline-0 focus:ring-2 focus:ring-blue-500/50 border focus:border-blue-600 h-12 p-[15px] text-base font-normal leading-normal ${
+                          isDark
+                            ? "text-gray-100 border-gray-700 bg-gray-950"
+                            : "text-gray-900 border-gray-300 bg-white"
+                        } opacity-70 cursor-not-allowed`}
+                        id="password"
+                        name="password"
+                        type="password"
+                        value={formData.password}
+                        readOnly
+                        tabIndex={-1}
+                      />
                     </div>
                   </div>
                 </section>
