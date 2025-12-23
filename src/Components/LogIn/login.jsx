@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function LogIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +16,88 @@ export default function LogIn() {
   const router = useRouter();
   const { login } = useAuth();
 
-  const handleLogin = async (e) => { 
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setLoading(true);
+      setError("");
+      try {
+        const apiUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        console.log(
+          "Sending Google Token to:",
+          `${apiUrl}/dj-rest-auth/google/`
+        );
+
+        const res = await fetch(`${apiUrl}/dj-rest-auth/google/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ access_token: tokenResponse.access_token }),
+        });
+
+        const text = await res.text();
+        console.log("Backend Response:", text);
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          console.error("Failed to parse JSON response:", text);
+          setError(
+            "Server Error: Received HTML instead of JSON. Check console for details."
+          );
+          setLoading(false);
+          return;
+        }
+
+        if (res.ok) {
+          const token = data.access || data.key;
+          const refreshToken = data.refresh;
+
+          if (!token) {
+            setError("Login succeeded but no access token received.");
+            setLoading(false);
+            return;
+          }
+
+          const userRes = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/dj-rest-auth/user/`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (userRes.ok) {
+            const userData = await userRes.json();
+
+            if (refreshToken) {
+              localStorage.setItem("refreshToken", refreshToken);
+            }
+            localStorage.setItem("authPrefix", "Bearer");
+
+            login(userData, token);
+            router.push("/general");
+          } else {
+            setError("Failed to fetch user profile.");
+          }
+        } else {
+          console.error("Google Login Error Response:", data);
+          setError("Google Login Failed");
+        }
+      } catch (err) {
+        console.error("Google Login Exception:", err);
+        setError("An unexpected error occurred. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => setError("Google Login Failed"),
+  });
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -175,7 +257,11 @@ export default function LogIn() {
             <span className="mx-2 text-gray-600">or</span>
             <div className="border border-gray-300 flex-1"></div>
           </div>
-          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full max-w-xs border border-dark-blue border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+          <button
+            onClick={() => handleGoogleLogin()}
+            type="button"
+            className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full max-w-xs border border-dark-blue border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+          >
             Sign In with Google
             <Image
               src="/google.svg"

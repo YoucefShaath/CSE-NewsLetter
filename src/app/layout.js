@@ -1,6 +1,7 @@
 import "./globals.css";
 import { ThemeProvider } from "../context/ThemeContext";
 import { AuthProvider } from "../context/AuthContext";
+import { GoogleAuthWrapper } from "../context/GoogleAuthWrapper";
 
 export const metadata = {
   title: "CSE Newsletter",
@@ -14,9 +15,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          <ThemeProvider>{children}</ThemeProvider>
-        </AuthProvider>
+        <GoogleAuthWrapper>
+          <AuthProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </AuthProvider>
+        </GoogleAuthWrapper>
       </body>
     </html>
   );

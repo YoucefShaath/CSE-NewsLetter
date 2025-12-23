@@ -265,7 +265,7 @@ export default function Post(props) {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={authorInfo.image}
+              src={authorInfo.image || "/default-profile.svg"}
               className="w-6 h-6 rounded-full object-cover"
               alt="author"
             />
@@ -346,7 +346,7 @@ export default function Post(props) {
                     className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden relative block"
                   >
                     <img
-                      src={authorInfo.image}
+                      src={authorInfo.image || "/default-profile.svg"}
                       className="object-cover w-full h-full cursor-pointer"
                       alt="Author"
                     />
@@ -512,7 +512,7 @@ export default function Post(props) {
 
               <div className="flex items-center gap-3 mt-2 cursor-pointer">
                 <img
-                  src={userImage}
+                  src={userImage || "/default-profile.svg"}
                   alt="current user"
                   width={32}
                   height={32}

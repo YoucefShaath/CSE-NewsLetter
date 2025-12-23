@@ -123,7 +123,7 @@ export default function Logedinnavbar() {
                 className="relative w-9 h-9 rounded-full overflow-hidden border border-gray-300 cursor-pointer focus:outline-none"
               >
                 <img
-                  src={userImage}
+                  src={userImage || "/default-profile.svg"}
                   alt="Profile"
                   className="object-cover w-full h-full"
                 />

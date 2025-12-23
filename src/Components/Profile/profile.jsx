@@ -52,10 +52,13 @@ export default function Profile(props) {
                 isDark ? "border-blue bg-blue-900" : "border-white bg-gray-200"
               }`}
             >
-              <img
-                src={user.image}
+              <Image
+                src={user.image || "/default-profile.svg"}
                 alt={user.name}
+                width={128}
+                height={128}
                 className="object-cover w-full h-full"
+                unoptimized
               />
             </div>
 

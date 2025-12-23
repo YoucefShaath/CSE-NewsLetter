@@ -203,18 +203,11 @@ export default function PersonalInformation() {
                   <div className="flex gap-6 items-center">
                     <div className="relative group">
                       <div className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-full overflow-hidden bg-gray-200">
-                        {userImage ? (
-                          // TEMPORARY DEBUGGING: Use standard img tag
-                          <img
-                            src={userImage}
-                            alt="Profile"
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-blue-500 text-white text-4xl">
-                            {formData.firstName?.[0] || "U"}
-                          </div>
-                        )}
+                        <img
+                          src={userImage || "/default-profile.svg"}
+                          alt="Profile"
+                          className="object-cover w-full h-full"
+                        />
                       </div>
                       <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
                         <span className="text-white text-3xl">📷</span>
