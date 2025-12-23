@@ -148,6 +148,7 @@ export default function UserProfilePage() {
           loggedInUser &&
           loggedInUser.username?.toLowerCase() === username?.toLowerCase()
         }
+        username={username}
       />
     </div>
   );

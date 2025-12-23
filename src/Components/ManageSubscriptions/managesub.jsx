@@ -156,7 +156,12 @@ export default function SubscriptionPage() {
                         key={`${dept.id}-${dept.following}`}
                         departmentName={dept.name}
                         initialIsFollowing={dept.following}
-                        token={token}
+                        token={
+                          token ||
+                          (typeof window !== "undefined"
+                            ? localStorage.getItem("token")
+                            : null)
+                        }
                         isDark={isDark}
                       />
                     </div>

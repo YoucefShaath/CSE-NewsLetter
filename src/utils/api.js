@@ -1,5 +1,5 @@
 export const toggleDepartmentFollow = async (departmentName, token) => {
-  const response = await fetch("https://cse-newsletter-backend.onrender.com/departments/follow/", {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/departments/follow/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

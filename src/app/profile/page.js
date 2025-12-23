@@ -114,6 +114,7 @@ export default function Page() {
         likedPosts={likedPosts}
         savedPosts={savedPosts}
         isOwnProfile={true}
+        username={userData?.username}
       />
     </div>
   );

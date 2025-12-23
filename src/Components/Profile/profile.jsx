@@ -48,7 +48,7 @@ export default function Profile(props) {
       const response = await fetch(
         `${
           process.env.NEXT_PUBLIC_API_URL ||
-          "https://cse-newsletter-backend.onrender.com"
+          "http://localhost:8000"
         }/users/${props.username}/update-role/`,
         {
           method: "POST",

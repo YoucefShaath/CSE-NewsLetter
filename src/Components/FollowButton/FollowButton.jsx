@@ -11,19 +11,21 @@ export default function FollowButton({
   const [loading, setLoading] = useState(false);
 
   const handleFollowClick = async () => {
+    if (!token) {
+      alert("You must be logged in to follow a department.");
+      console.warn("No token found for follow request.");
+      return;
+    }
     setLoading(true);
     try {
+      console.log("Using token for follow:", token);
       // Call the API
       const data = await toggleDepartmentFollow(departmentName, token);
 
       // Update state based on backend response
-      // Assuming the backend returns { following: boolean } or similar
-      // If the backend returns the new state, use it.
-      // If the user's snippet implies data.following, I'll use that.
       if (data && typeof data.following !== "undefined") {
         setIsFollowing(data.following);
       } else {
-        // Fallback if response structure is different, just toggle
         setIsFollowing(!isFollowing);
       }
     } catch (error) {
