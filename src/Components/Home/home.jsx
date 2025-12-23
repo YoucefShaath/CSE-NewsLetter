@@ -21,21 +21,21 @@ export default function Home() {
             alt="Decoration"
             width={500}
             height={500}
-            className="absolute top-16 opacity-100 max-w-full"
+            className="absolute hidden lg:block top-16 opacity-100 max-w-full"
           />
           <Image
             src="/glow.svg"
             alt="Glow Decoration"
-            width={600}
-            height={600}
-            className="absolute -left-40 -top-28 opacity-50 max-w-full"
+            width={300}
+            height={300}
+            className="absolute -left-40 hidden lg:block -top-28 opacity-50 max-w-full"
           />
           <Image
             src="/glow.svg"
             alt="Glow Decoration"
-            width={600}
-            height={600}
-            className="absolute right-0 bottom-0 opacity-50 max-w-full"
+            width={300}
+            height={300}
+            className="absolute right-0 hidden lg:block bottom-0 opacity-50 max-w-full"
           />
           <h1
             className={`text-4xl md:text-6xl font-bold font-eb-garamond mb-4 mt-20 ${
