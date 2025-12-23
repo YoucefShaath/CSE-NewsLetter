@@ -1,5 +1,5 @@
 export const toggleDepartmentFollow = async (departmentName, token) => {
-  const response = await fetch("http://127.0.0.1:8000/departments/follow/", {
+  const response = await fetch("https://cse-newsletter-backend.onrender.com/departments/follow/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
