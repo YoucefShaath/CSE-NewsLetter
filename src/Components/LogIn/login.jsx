@@ -62,7 +62,12 @@ export default function LogIn() {
         setLoading(false);
       }
     },
-    onError: () => setError("Google Login Failed"),
+    onError: () => {
+      setError("Google Login Failed: Popup blocked or closed.");
+      setLoading(false);
+    },
+    // Adding flow: 'implicit' can sometimes help with popup behavior
+    flow: 'implicit', 
   });
 
   const handleLogin = async (e) => {
@@ -106,9 +111,6 @@ export default function LogIn() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-full">
-      {/* LEFT SECTION (Desktop: White, Mobile: Dark Blue)
-          We use responsive classes to change background and text colors 
-      */}
       <div className="flex flex-col items-center md:items-start justify-center w-full md:w-[50%] h-full px-8 md:px-24 lg:px-48 bg-dark-blue md:bg-white text-white md:text-black">
         <div className="w-full max-w-xs">
           <span className="text-4xl font-bold">Log In</span>
@@ -179,9 +181,9 @@ export default function LogIn() {
           </div>
 
           <button
-            onClick={() => handleGoogleLogin()}
+            onClick={handleGoogleLogin}
             type="button"
-            className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full border-2 border-white md:border-dark-blue hover:bg-dark-blue hover:text-white md:hover:bg-dark-blue md:hover:text-white transition-all duration-300 shadow-md flex items-center justify-center"
+            className="cursor-pointer bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full border-2 border-white md:border-dark-blue hover:bg-dark-blue hover:text-white md:hover:bg-dark-blue md:hover:text-white transition-all duration-300 shadow-md flex items-center justify-center"
           >
             Sign In with Google
             <Image src="/google.svg" alt="Google logo" width={20} height={20} className="ml-2" />
@@ -196,7 +198,6 @@ export default function LogIn() {
         </div>
       </div>
 
-      {/* RIGHT SECTION (Desktop Branding - Hidden on mobile) */}
       <div className="hidden md:flex flex-col items-center justify-center w-[50%] bg-dark-blue">
         <Image src="/darklogo.svg" alt="CSE Logo" width={200} height={200} className="mx-auto mb-10 animate-pulse" />
         <span className="text-white text-4xl text-center font-eb-garamond uppercase">

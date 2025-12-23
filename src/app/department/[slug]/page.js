@@ -1,6 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import DepartmentPage from "@/Components/departements/departements.jsx";
+import FollowedDepartmentsPage from "@/Components/Following/Following.jsx";
 import Navbar from "@/Components/NavBar/Logedinnavbar.jsx";
 import { useTheme } from "../../../context/ThemeContext";
 import {
@@ -11,6 +12,7 @@ import {
   FaBullhorn,
   FaHandshake,
   FaCamera,
+  FaUserFriends,
 } from "react-icons/fa";
 
 export default function Page() {
@@ -27,6 +29,7 @@ export default function Page() {
     comm: "Communication",
     "relev-relex": "Relev/Relex",
     multimedia: "Multimedia",
+    following: "Following",
   };
 
   const departmentIcons = {
@@ -37,6 +40,7 @@ export default function Page() {
     comm: <FaBullhorn />,
     "relev-relex": <FaHandshake />,
     multimedia: <FaCamera />,
+    following: <FaUserFriends />,
   };
 
   const departmentName = departmentNames[slug] || "Department";
@@ -45,11 +49,17 @@ export default function Page() {
   return (
     <>
       <Navbar />
+      {departmentName === "Following" ? (
+        <FollowedDepartmentsPage
+          departmentIcon={departmentIcon}
+          departmentName={departmentName}
+        />
+      ) : (
       <DepartmentPage
-        departmentImage={isDark ? "/whitehouse.svg" : "/home.svg"}
         departmentIcon={departmentIcon}
         departmentName={departmentName}
       />
+      )}
     </>
   );
 }

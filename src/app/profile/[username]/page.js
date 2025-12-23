@@ -119,9 +119,7 @@ export default function UserProfilePage() {
 
   const displayRole = userData?.role || "Member";
 
-  const displayImage = userData?.image
-    ? getImageUrl(userData.image)
-    : "/hackitpic.png";
+  const displayImage = getImageUrl(userData.image);
 
   if (loading) {
     return (
