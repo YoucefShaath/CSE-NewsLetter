@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function SignUp() {
   const [showPassword1, setShowPassword1] = useState(false);
@@ -454,7 +455,8 @@ export default function SignUp() {
             <span className="mx-2 text-gray-600">or</span>
             <div className="border border-gray-300 flex-1"></div>
           </div>
-          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full max-w-xs border-white border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full max-w-xs border-white border-[2px] hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+          onClick={() => signIn("google", { callbackUrl: "/" })}>
             Sign Up with Google
             <Image
               src="/google.svg"
