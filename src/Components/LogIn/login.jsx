@@ -41,7 +41,11 @@ export default function LogIn() {
 
         let data;
         try {
-          data = JSON.parse(text);
+          if (res.headers.get("content-type")?.includes("application/json")) {
+            data = JSON.parse(text);
+          } else {
+            throw new Error("Expected JSON, got: " + text);
+          }
         } catch (e) {
           console.error("Failed to parse JSON response:", text);
           setError(
@@ -85,7 +89,13 @@ export default function LogIn() {
           }
         } else {
           console.error("Google Login Error Response:", data);
-          setError("Google Login Failed");
+          if (!data || Object.keys(data).length === 0) {
+            setError("Google Login failed: No details provided by server.");
+          } else if (data.error) {
+            setError(`Google Login failed: ${data.error}`);
+          } else {
+            setError("Google Login Failed");
+          }
         }
       } catch (err) {
         console.error("Google Login Exception:", err);
@@ -371,7 +381,11 @@ export default function LogIn() {
             <span className="mx-2 text-gray-600">or</span>
             <div className="border border-gray-300 flex-1"></div>
           </div>
-          <button className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full max-w-xs  border-white border-2 hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg">
+          <button
+            onClick={() => handleGoogleLogin()}
+            type="button"
+            className="bg-white text-dark-blue rounded-md px-4 py-2 mt-6 w-full max-w-xs  border-white border-2 hover:bg-dark-blue hover:text-white transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
+          >
             Sign In with Google
             <Image
               src="/google.svg"

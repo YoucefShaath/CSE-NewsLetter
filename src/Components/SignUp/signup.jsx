@@ -49,7 +49,11 @@ export default function SignUp() {
 
         let data;
         try {
-          data = JSON.parse(text);
+          if (res.headers.get("content-type")?.includes("application/json")) {
+            data = JSON.parse(text);
+          } else {
+            throw new Error("Expected JSON, got: " + text);
+          }
         } catch (e) {
           console.error("Failed to parse JSON response:", text);
           setError(
@@ -93,7 +97,13 @@ export default function SignUp() {
           }
         } else {
           console.error("Google Login Error Response:", data);
-          setError("Google Login Failed");
+          if (!data || Object.keys(data).length === 0) {
+            setError("Google Login failed: No details provided by server.");
+          } else if (data.error) {
+            setError(`Google Login failed: ${data.error}`);
+          } else {
+            setError("Google Login Failed");
+          }
         }
       } catch (err) {
         console.error("Google Login Exception:", err);
