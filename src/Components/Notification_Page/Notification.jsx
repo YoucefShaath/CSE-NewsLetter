@@ -2,14 +2,15 @@
 import Image from "next/image";
 import { useTheme } from "../../context/ThemeContext";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function NotificationPage() {
   const { theme } = useTheme();
+  const router = useRouter();
   const isDark = theme === "dark";
   const [activeTab, setActiveTab] = useState("All");
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
- 
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -17,17 +18,19 @@ export default function NotificationPage() {
         const token = localStorage.getItem("token");
         const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/notifications/`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${authPrefix} ${token}`,
-          },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/notifications/`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${authPrefix} ${token}`,
+            },
+          }
+        );
 
         if (!res.ok) {
-           throw new Error("Failed to fetch notifications");
+          throw new Error("Failed to fetch notifications");
         }
-         
 
         const data = await res.json();
         setNotifications(data);
@@ -43,11 +46,59 @@ export default function NotificationPage() {
 
   const filteredNotifications = notifications.filter((n) => {
     if (activeTab === "Unread") return !n.is_read;
-    if (activeTab === "Mentions") return false; 
+    if (activeTab === "Mentions") return false;
     return true;
   });
 
+  const handleNotificationClick = async (notification) => {
+    // Mark as read if not already read
+    if (!notification.is_read) {
+      try {
+        const token = localStorage.getItem("token");
+        const authPrefix = localStorage.getItem("authPrefix") || "Bearer";
+        await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/notifications/${notification.id}/`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${authPrefix} ${token}`,
+            },
+            body: JSON.stringify({ is_read: true }),
+          }
+        );
 
+        // Update local state
+        setNotifications((prev) =>
+          prev.map((n) =>
+            n.id === notification.id ? { ...n, is_read: true } : n
+          )
+        );
+      } catch (error) {
+        console.error("Error marking notification as read:", error);
+      }
+    }
+
+    // Navigate to the correct department page
+    const deptName = notification.department;
+    const slugMap = {
+      Development: "dev",
+      "UI/UX": "ui-ux",
+      Design: "design",
+      HR: "hr",
+      Communication: "comm",
+      "Relev/Relex": "relev-relex",
+      Multimedia: "multimedia",
+    };
+
+    if (deptName === "General") {
+      router.push("/general");
+    } else if (slugMap[deptName]) {
+      router.push(`/department/${slugMap[deptName]}`);
+    } else {
+      router.push("/");
+    }
+  };
 
   return (
     <div
@@ -141,62 +192,63 @@ export default function NotificationPage() {
             </div>
           ) : (
             <div className="divide-y divide-gray-200/10 dark:divide-white/10">
-              {notifications.map((notification) => (
+              {filteredNotifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-6 sm:p-8 flex items-start gap-6 transition-colors duration-200 ${
+                  onClick={() => handleNotificationClick(notification)}
+                  className={`p-6 sm:p-8 flex items-start gap-6 transition-colors duration-200 cursor-pointer ${
                     isDark ? "hover:bg-white/5" : "hover:bg-gray-50"
-                  } ${!notification.read && isDark ? "bg-blue-500/10" : ""} ${
-                    !notification.read && !isDark ? "bg-blue-50" : ""
-                  }`}
+                  } ${
+                    !notification.is_read && isDark ? "bg-blue-500/10" : ""
+                  } ${!notification.is_read && !isDark ? "bg-blue-50" : ""}`}
                 >
-                {/* Avatar/Icon */}
-                <div
-                  className={`shrink-0 w-16 h-16 rounded-full flex items-center justify-center text-2xl shadow-lg ${
-                    isDark
-                      ? "bg-gradient-to-br from-blue-500 to-blue-700 text-white"
-                      : "bg-gradient-to-br from-white to-gray-100 text-dark-blue border border-gray-200"
-                  }`}
-                >
-                  {notification.department.charAt(0)}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3
-                      className={`text-xl font-bold truncate ${
-                        isDark ? "text-white" : "text-dark-blue"
-                      }`}
-                    >
-                      {notification.department}
-                    </h3>
-                    <span
-                      className={`text-sm ${
-                        isDark ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      {new Date(notification.time).toLocaleString()} 
-                    </span>
-                  </div>
-                  <p
-                    className={`text-lg leading-relaxed ${
-                      isDark ? "text-gray-300" : "text-gray-600"
+                  {/* Avatar/Icon */}
+                  <div
+                    className={`shrink-0 w-16 h-16 rounded-full flex items-center justify-center text-2xl shadow-lg ${
+                      isDark
+                        ? "bg-gradient-to-br from-blue-500 to-blue-700 text-white"
+                        : "bg-gradient-to-br from-white to-gray-100 text-dark-blue border border-gray-200"
                     }`}
                   >
-                    {notification.message}
-                  </p>
-                </div>
-
-                {/* Unread Indicator */}
-                {!notification.read && (
-                  <div className="shrink-0 mt-2">
-                    <div className="w-3 h-3 rounded-full bg-light-blue shadow-[0_0_8px_rgba(56,189,248,0.8)]"></div>
+                    {notification.department.charAt(0)}
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3
+                        className={`text-xl font-bold truncate ${
+                          isDark ? "text-white" : "text-dark-blue"
+                        }`}
+                      >
+                        {notification.department}
+                      </h3>
+                      <span
+                        className={`text-sm ${
+                          isDark ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        {new Date(notification.time).toLocaleString()}
+                      </span>
+                    </div>
+                    <p
+                      className={`text-lg leading-relaxed ${
+                        isDark ? "text-gray-300" : "text-gray-600"
+                      }`}
+                    >
+                      {notification.message}
+                    </p>
+                  </div>
+
+                  {/* Unread Indicator */}
+                  {!notification.is_read && (
+                    <div className="shrink-0 mt-2">
+                      <div className="w-3 h-3 rounded-full bg-light-blue shadow-[0_0_8px_rgba(56,189,248,0.8)]"></div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
